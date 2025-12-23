@@ -51,22 +51,17 @@ export function Sidebar({ clientName = 'לקוח', domain }: SidebarProps) {
 
   return (
     <aside 
-      className="fixed right-0 top-0 z-40 h-screen w-64 bg-[#1E293B] flex flex-col"
+      className="fixed right-0 top-0 z-40 h-screen w-64 bg-[#0F172A] flex flex-col"
       role="navigation"
       aria-label="תפריט ראשי"
     >
-      {/* Primary Brand: Just In Time */}
-      <div className="flex flex-col items-center justify-center px-6 py-6 border-b border-white/10">
-        <p className="text-white/50 text-xs mb-2">מבית</p>
-        <Link href="/overview" aria-label="חזרה לסקירה כללית">
-          <Image
-            src="/justintime-white-logo-transparent.png"
-            alt="Just In Time Logo"
-            width={160}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
+      {/* Dealroom Branding */}
+      <div className="px-6 py-5 border-b border-white/10">
+        <Link href="/overview" className="block">
+          <h1 className="text-2xl font-bold text-white tracking-tight">
+            Dealroom
+          </h1>
+          <p className="text-xs text-white/50 mt-1">מבית Just In Time</p>
         </Link>
       </div>
 
@@ -116,16 +111,25 @@ export function Sidebar({ clientName = 'לקוח', domain }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Secondary Brand: Geoscale */}
-      <div className="px-6 py-4 border-t border-white/10">
-        <div className="flex flex-col items-center justify-center">
+      {/* Logos at bottom */}
+      <div className="px-6 py-4 border-t border-white/10 space-y-4">
+        <div className="flex flex-col items-center">
+          <Image
+            src="/justintime-white-logo-transparent.png"
+            alt="Just In Time Logo"
+            width={120}
+            height={30}
+            className="h-7 w-auto opacity-70 hover:opacity-100 transition-opacity"
+          />
+        </div>
+        <div className="flex flex-col items-center">
           <span className="text-white/40 text-xs mb-2">בשיתוף</span>
           <Image
             src="/Geoscale-white-logo-transparent.png"
             alt="Geoscale Logo"
             width={90}
             height={22}
-            className="h-5 w-auto opacity-60 hover:opacity-100 transition-opacity"
+            className="h-5 w-auto opacity-50 hover:opacity-80 transition-opacity"
           />
         </div>
       </div>

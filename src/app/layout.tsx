@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "הצעת שירותי SEO | JustInTime Marketing",
-  description: "הצעה מותאמת אישית לשירותי קידום אתרים, SEO ו-GEO",
+  title: "Dealroom | Just In Time",
+  description: "הצעות שירותי SEO אינטראקטיביות",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body className="antialiased min-h-screen bg-background">
+      <body className="antialiased">
         {children}
       </body>
     </html>
