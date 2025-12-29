@@ -12,6 +12,7 @@ export default function BestLinksDashboardPage() {
   // #endregion
   
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['ipc']));
+  const [selectedClient, setSelectedClient] = useState<string | null>(null);
   
   // #region agent log
   useEffect(() => {
@@ -29,6 +30,23 @@ export default function BestLinksDashboardPage() {
       }
       return newSet;
     });
+  };
+
+  const scrollToClient = (clientId: string) => {
+    const element = document.getElementById(`client-${clientId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleClientSelect = (clientId: string | null) => {
+    setSelectedClient(clientId);
+    if (clientId) {
+      scrollToClient(clientId);
+      setOpenSections(new Set([clientId]));
+    } else {
+      setOpenSections(new Set(['ipc', 'techom', 'danesya', 'zoolu', 'mhaim']));
+    }
   };
 
   return (
@@ -559,7 +577,177 @@ export default function BestLinksDashboardPage() {
           to { text-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 30px rgba(236, 72, 153, 0.6); }
         }
         
-        @media (max-width: 768px) {
+        .team-alert {
+          background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2));
+          border: 2px solid rgba(245, 158, 11, 0.5);
+          border-radius: 16px;
+          padding: 20px 30px;
+          margin-bottom: 30px;
+          animation: pulseAlert 2s infinite;
+          box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        @keyframes pulseAlert {
+          0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+          50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
+        }
+        
+        .team-alert h3 {
+          font-size: 1.3rem;
+          font-weight: 700;
+          margin-bottom: 10px;
+          color: #fbbf24;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        
+        .team-alert p {
+          color: #fde68a;
+          line-height: 1.6;
+          margin: 5px 0;
+        }
+        
+        .client-selector {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background: rgba(15, 23, 42, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 15px 20px;
+          margin: -20px -20px 30px -20px;
+          border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        .client-selector-btn {
+          padding: 10px 20px;
+          border-radius: 25px;
+          border: 2px solid transparent;
+          background: rgba(30, 41, 59, 0.8);
+          color: #e2e8f0;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .client-selector-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .client-selector-btn.active {
+          border-color: currentColor;
+          box-shadow: 0 0 15px currentColor;
+        }
+        
+        .client-selector-btn.ipc { color: #8b5cf6; }
+        .client-selector-btn.techom { color: #f87171; }
+        .client-selector-btn.danesya { color: #fbbf24; }
+        .client-selector-btn.zoolu { color: #34d399; }
+        .client-selector-btn.mhaim { color: #f472b6; }
+        .client-selector-btn.all { color: #60a5fa; }
+        
+        .client-links-section {
+          padding: 20px 30px;
+          background: rgba(15, 23, 42, 0.5);
+          border-radius: 12px;
+          margin-bottom: 20px;
+          border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        
+        .client-links-title {
+          font-size: 1.1rem;
+          font-weight: 700;
+          margin-bottom: 15px;
+          color: #e2e8f0;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        
+        .client-links-buttons {
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+        }
+        
+        .doc-link-btn {
+          padding: 12px 24px;
+          border-radius: 10px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          border: 2px solid transparent;
+        }
+        
+        .doc-link-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .doc-link-btn.planning {
+          background: linear-gradient(135deg, #3b82f6, #60a5fa);
+          color: white;
+        }
+        
+        .doc-link-btn.seo {
+          background: linear-gradient(135deg, #10b981, #34d399);
+          color: white;
+          border-color: #34d399;
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .doc-link-btn.seo:hover {
+          box-shadow: 0 5px 25px rgba(16, 185, 129, 0.6);
+        }
+        
+        .doc-explanation {
+          margin-top: 15px;
+          padding: 15px;
+          background: rgba(30, 41, 59, 0.6);
+          border-radius: 8px;
+          border-right: 4px solid;
+          font-size: 0.9rem;
+          line-height: 1.6;
+        }
+        
+        .doc-explanation.planning { border-color: #60a5fa; }
+        .doc-explanation.seo { border-color: #34d399; }
+        
+        .doc-explanation h4 {
+          font-size: 1rem;
+          font-weight: 700;
+          margin-bottom: 8px;
+        }
+        
+        .doc-explanation ul {
+          margin: 8px 0;
+          padding-right: 20px;
+        }
+        
+        .doc-explanation li {
+          margin: 5px 0;
+          color: #cbd5e1;
+        }
+        
+        .client-section.hidden {
+          display: none;
+        }
+        
+          @media (max-width: 768px) {
           .bestlinks-header h1 {
             font-size: 2rem;
           }
@@ -583,6 +771,27 @@ export default function BestLinksDashboardPage() {
           .summary-grid {
             grid-template-columns: 1fr;
           }
+          
+          .client-selector {
+            padding: 10px 15px;
+            overflow-x: auto;
+            justify-content: flex-start;
+          }
+          
+          .client-selector-btn {
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            white-space: nowrap;
+          }
+          
+          .client-links-buttons {
+            flex-direction: column;
+          }
+          
+          .doc-link-btn {
+            width: 100%;
+            justify-content: center;
+          }
         }
       `}</style>
 
@@ -600,6 +809,56 @@ export default function BestLinksDashboardPage() {
             <p>מעקב סטטוס פרסום מאמרים לאתרי מדיה</p>
             <div className="last-update">🕐 עדכון אחרון: 29 דצמבר 2025</div>
           </header>
+
+          {/* Team Alert */}
+          <div className="team-alert">
+            <h3>⚠️ חשוב לצוות: עדכון מסמכי קידום</h3>
+            <p><strong>לאחר כל פרסום מאמר בסטלינקס, יש לעדכן את מסמכי הקידום (Google Docs) עם הלינק החדש!</strong></p>
+            <p>After every article is published, add the link to the client's SEO Document!</p>
+            <p style={{ marginTop: '10px', fontSize: '0.9rem', opacity: 0.9 }}>
+              מסמכי הקידום הם המסירה העיקרית ללקוחות - הם מכילים את כל הלינקים שמצביעים לאתרי הלקוחות.
+            </p>
+          </div>
+
+          {/* Client Selector */}
+          <div className="client-selector">
+            <button 
+              className={`client-selector-btn all ${selectedClient === null ? 'active' : ''}`}
+              onClick={() => handleClientSelect(null)}
+            >
+              📋 הכל
+            </button>
+            <button 
+              className={`client-selector-btn ipc ${selectedClient === 'ipc' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('ipc')}
+            >
+              🎓 IPC
+            </button>
+            <button 
+              className={`client-selector-btn techom ${selectedClient === 'techom' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('techom')}
+            >
+              🔐 טקהום
+            </button>
+            <button 
+              className={`client-selector-btn danesya ${selectedClient === 'danesya' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('danesya')}
+            >
+              🏠 דנסיה
+            </button>
+            <button 
+              className={`client-selector-btn zoolu ${selectedClient === 'zoolu' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('zoolu')}
+            >
+              🦁 זולו
+            </button>
+            <button 
+              className={`client-selector-btn mhaim ${selectedClient === 'mhaim' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('mhaim')}
+            >
+              🐾 המחסן של חיים
+            </button>
+          </div>
 
           {/* Summary Cards */}
           <div className="summary-grid">
@@ -626,7 +885,7 @@ export default function BestLinksDashboardPage() {
           </div>
 
           {/* IPC Section */}
-          <section className="client-section">
+          <section id="client-ipc" className={`client-section ${selectedClient && selectedClient !== 'ipc' ? 'hidden' : ''}`}>
             <div className="client-header" onClick={() => toggleSection('ipc')}>
               <div className="client-info">
                 <div className="client-icon ipc">🎓</div>
@@ -659,6 +918,51 @@ export default function BestLinksDashboardPage() {
             </div>
             
             <div className={`collapse-content ${openSections.has('ipc') ? 'active' : ''}`}>
+              {/* Client Quick Links */}
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - IPC</div>
+                <div className="client-links-buttons">
+                  <a 
+                    href="https://docs.google.com/spreadsheets/d/18OPxjYa3JEM4M198Mh7QPPVGbRT4EnFTbZbiFziFLaA/edit?gid=0#gid=0" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn planning"
+                  >
+                    📊 טבלת תכנון
+                  </a>
+                  <a 
+                    href="https://docs.google.com/document/d/1FE66e0rgAdJTuAb70M1-YHZtcWhOmaFLe_Y9e6uyRrU/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn seo"
+                  >
+                    📄 מסמך לינקים (עדכן כאן!)
+                  </a>
+                </div>
+                <div className="doc-explanation planning">
+                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
+                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
+                  <ul>
+                    <li>כותרות מאמרים ונושאים</li>
+                    <li>אתרי מדיה יעד</li>
+                    <li>תאריכי פרסום/תזמון</li>
+                    <li>סטטוס (נכתב, אושר, פורסם)</li>
+                    <li>מחירים ותקציבים</li>
+                  </ul>
+                </div>
+                <div className="doc-explanation seo">
+                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
+                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
+                  <ul>
+                    <li>כל הלינקים ממאמרים שפורסמו</li>
+                    <li>URL + טקסט עוגן (anchor text)</li>
+                    <li>מאורגן לפי קמפיין/אצווה</li>
+                  </ul>
+                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
+                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
+                  </p>
+                </div>
+              </div>
               <div className="articles-container">
                 <table className="articles-table">
                   <thead>
@@ -776,7 +1080,7 @@ export default function BestLinksDashboardPage() {
           </section>
 
           {/* Techom Section */}
-          <section className="client-section">
+          <section id="client-techom" className={`client-section ${selectedClient && selectedClient !== 'techom' ? 'hidden' : ''}`}>
             <div className="client-header" onClick={() => toggleSection('techom')}>
               <div className="client-info">
                 <div className="client-icon techom">🔐</div>
@@ -809,6 +1113,51 @@ export default function BestLinksDashboardPage() {
             </div>
             
             <div className={`collapse-content ${openSections.has('techom') ? 'active' : ''}`}>
+              {/* Client Quick Links */}
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - טקהום</div>
+                <div className="client-links-buttons">
+                  <a 
+                    href="https://docs.google.com/spreadsheets/d/14JqLypt9kDdjzUUJAPXrvIVKzyVnM9I0/edit?gid=571005030#gid=571005030" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn planning"
+                  >
+                    📊 טבלת תכנון
+                  </a>
+                  <a 
+                    href="https://docs.google.com/document/d/1TWSjlklfsfVclOkZ3BlYSo2WJikb0-rGSRo8-Zu4J4s/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn seo"
+                  >
+                    📄 מסמך לינקים (עדכן כאן!)
+                  </a>
+                </div>
+                <div className="doc-explanation planning">
+                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
+                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
+                  <ul>
+                    <li>כותרות מאמרים ונושאים</li>
+                    <li>אתרי מדיה יעד</li>
+                    <li>תאריכי פרסום/תזמון</li>
+                    <li>סטטוס (נכתב, אושר, פורסם)</li>
+                    <li>מחירים ותקציבים</li>
+                  </ul>
+                </div>
+                <div className="doc-explanation seo">
+                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
+                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
+                  <ul>
+                    <li>כל הלינקים ממאמרים שפורסמו</li>
+                    <li>URL + טקסט עוגן (anchor text)</li>
+                    <li>מאורגן לפי קמפיין/אצווה</li>
+                  </ul>
+                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
+                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
+                  </p>
+                </div>
+              </div>
               <div className="articles-container">
                 <table className="articles-table">
                   <thead>
@@ -909,7 +1258,7 @@ export default function BestLinksDashboardPage() {
           </section>
 
           {/* Danesya Section */}
-          <section className="client-section">
+          <section id="client-danesya" className={`client-section ${selectedClient && selectedClient !== 'danesya' ? 'hidden' : ''}`}>
             <div className="client-header" onClick={() => toggleSection('danesya')}>
               <div className="client-info">
                 <div className="client-icon danesya">🏠</div>
@@ -942,6 +1291,51 @@ export default function BestLinksDashboardPage() {
             </div>
             
             <div className={`collapse-content ${openSections.has('danesya') ? 'active' : ''}`}>
+              {/* Client Quick Links */}
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - דנסיה</div>
+                <div className="client-links-buttons">
+                  <a 
+                    href="https://docs.google.com/spreadsheets/d/1yS9ynLV86z3YKn8VijJkTk5H6gXeAtcazCQ7LHHc8s0/edit?gid=0#gid=0" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn planning"
+                  >
+                    📊 טבלת תכנון
+                  </a>
+                  <a 
+                    href="https://docs.google.com/document/d/1qtGeX29OrCst246QHucOo7UPyms8JqTubIxfvSuweIo/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn seo"
+                  >
+                    📄 מסמך לינקים (עדכן כאן!)
+                  </a>
+                </div>
+                <div className="doc-explanation planning">
+                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
+                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
+                  <ul>
+                    <li>כותרות מאמרים ונושאים</li>
+                    <li>אתרי מדיה יעד</li>
+                    <li>תאריכי פרסום/תזמון</li>
+                    <li>סטטוס (נכתב, אושר, פורסם)</li>
+                    <li>מחירים ותקציבים</li>
+                  </ul>
+                </div>
+                <div className="doc-explanation seo">
+                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
+                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
+                  <ul>
+                    <li>כל הלינקים ממאמרים שפורסמו</li>
+                    <li>URL + טקסט עוגן (anchor text)</li>
+                    <li>מאורגן לפי קמפיין/אצווה</li>
+                  </ul>
+                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
+                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
+                  </p>
+                </div>
+              </div>
               <div className="articles-container">
                 <table className="articles-table">
                   <thead>
@@ -1082,7 +1476,7 @@ export default function BestLinksDashboardPage() {
           </section>
 
           {/* Zoolu Section */}
-          <section className="client-section">
+          <section id="client-zoolu" className={`client-section ${selectedClient && selectedClient !== 'zoolu' ? 'hidden' : ''}`}>
             <div className="client-header" onClick={() => toggleSection('zoolu')}>
               <div className="client-info">
                 <div className="client-icon zoolu">🦁</div>
@@ -1119,6 +1513,51 @@ export default function BestLinksDashboardPage() {
             </div>
             
             <div className={`collapse-content ${openSections.has('zoolu') ? 'active' : ''}`}>
+              {/* Client Quick Links */}
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - זולו</div>
+                <div className="client-links-buttons">
+                  <a 
+                    href="https://docs.google.com/spreadsheets/d/1BaLmOtVOlMPiNLI4RZDbW9kcAAAsY9Hd/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn planning"
+                  >
+                    📊 טבלת תכנון
+                  </a>
+                  <a 
+                    href="https://docs.google.com/document/d/1TWSjlklfsfVclOkZ3BlYSo2WJikb0-rGSRo8-Zu4J4s/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn seo"
+                  >
+                    📄 מסמך לינקים (עדכן כאן!)
+                  </a>
+                </div>
+                <div className="doc-explanation planning">
+                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
+                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
+                  <ul>
+                    <li>כותרות מאמרים ונושאים</li>
+                    <li>אתרי מדיה יעד</li>
+                    <li>תאריכי פרסום/תזמון</li>
+                    <li>סטטוס (נכתב, אושר, פורסם)</li>
+                    <li>מחירים ותקציבים</li>
+                  </ul>
+                </div>
+                <div className="doc-explanation seo">
+                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
+                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
+                  <ul>
+                    <li>כל הלינקים ממאמרים שפורסמו</li>
+                    <li>URL + טקסט עוגן (anchor text)</li>
+                    <li>מאורגן לפי קמפיין/אצווה</li>
+                  </ul>
+                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
+                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
+                  </p>
+                </div>
+              </div>
               <div className="timeline">
                 <div className="timeline-title">📅 תזמונים קרובים</div>
                 <div className="timeline-grid">
@@ -1161,7 +1600,7 @@ export default function BestLinksDashboardPage() {
           </section>
 
           {/* Mhaim Section */}
-          <section className="client-section">
+          <section id="client-mhaim" className={`client-section ${selectedClient && selectedClient !== 'mhaim' ? 'hidden' : ''}`}>
             <div className="client-header" onClick={() => toggleSection('mhaim')}>
               <div className="client-info">
                 <div className="client-icon mhaim">🐾</div>
@@ -1198,6 +1637,51 @@ export default function BestLinksDashboardPage() {
             </div>
             
             <div className={`collapse-content ${openSections.has('mhaim') ? 'active' : ''}`}>
+              {/* Client Quick Links */}
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - המחסן של חיים</div>
+                <div className="client-links-buttons">
+                  <a 
+                    href="https://docs.google.com/spreadsheets/d/1SafY06BwYyUDXoJhARAp2ngGdSjJjra8/edit?gid=189942519#gid=189942519" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn planning"
+                  >
+                    📊 טבלת תכנון
+                  </a>
+                  <a 
+                    href="https://docs.google.com/document/d/1zygB3DF3NI6pUX2nqRWngUf-RpV3VGG_dL6jaNRN9js/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="doc-link-btn seo"
+                  >
+                    📄 מסמך לינקים (עדכן כאן!)
+                  </a>
+                </div>
+                <div className="doc-explanation planning">
+                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
+                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
+                  <ul>
+                    <li>כותרות מאמרים ונושאים</li>
+                    <li>אתרי מדיה יעד</li>
+                    <li>תאריכי פרסום/תזמון</li>
+                    <li>סטטוס (נכתב, אושר, פורסם)</li>
+                    <li>מחירים ותקציבים</li>
+                  </ul>
+                </div>
+                <div className="doc-explanation seo">
+                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
+                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
+                  <ul>
+                    <li>כל הלינקים ממאמרים שפורסמו</li>
+                    <li>URL + טקסט עוגן (anchor text)</li>
+                    <li>מאורגן לפי קמפיין/אצווה</li>
+                  </ul>
+                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
+                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
+                  </p>
+                </div>
+              </div>
               <div className="articles-container">
                 <table className="articles-table">
                   <thead>

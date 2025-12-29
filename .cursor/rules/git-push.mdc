@@ -1,0 +1,14 @@
+---
+description: Push to GitHub and deploy to Vercel
+globs: ["**/*"]
+alwaysApply: false
+---
+
+When the user says "push", "push it", "deploy", "push to github", or "git push":
+
+1. Run these commands in sequence:
+```powershell
+cd "C:\Users\Alon\.cursor\Cursor Workspaces\seo-dashboard"
+git add .
+git commit -m "<brief description of changes>"
+git push origin main
