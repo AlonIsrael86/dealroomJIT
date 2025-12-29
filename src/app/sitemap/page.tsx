@@ -68,6 +68,15 @@ const allPages: PageItem[] = [
     category: 'SEO Dashboard',
     emoji: '👥'
   },
+  // SEO Reports / Client Dashboards
+  {
+    href: '/mb-ltd-seo-analysis.html',
+    title: 'ניתוח SEO - MB-LTD.co.il',
+    description: 'דשבורד ביצועים SEO מפורט עבור MB-LTD - ניתוח מילות מפתח, מתחרים והמלצות',
+    icon: BarChart3,
+    category: 'SEO Reports',
+    emoji: '📊'
+  },
   // BestLinks Tools
   {
     href: '/bestlinks-dashboard',
@@ -82,6 +91,7 @@ const allPages: PageItem[] = [
 const categories = [
   { id: 'all', label: 'הכל', emoji: '🌐' },
   { id: 'SEO Dashboard', label: 'SEO Dashboard', emoji: '📊' },
+  { id: 'SEO Reports', label: 'דוחות SEO', emoji: '📈' },
   { id: 'BestLinks', label: 'BestLinks', emoji: '📝' },
 ];
 

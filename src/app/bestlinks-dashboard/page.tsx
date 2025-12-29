@@ -1,9 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function BestLinksDashboardPage() {
+  // #region agent log
+  useEffect(() => {
+    const bodyAttrs = Array.from(document.body.attributes).map(attr => ({ name: attr.name, value: attr.value.substring(0, 50) }));
+    const hasExtensionAttrs = bodyAttrs.some(attr => attr.name.includes('__processed') || attr.name.includes('bis_') || attr.name.includes('inject_'));
+    fetch('http://127.0.0.1:7245/ingest/805f12d4-c5d3-49bb-bec4-c34e003d25d3',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'bestlinks-dashboard/page.tsx:9',message:'Component mounted on client',data:{hasWindow:typeof window!=='undefined',userAgent:typeof navigator!=='undefined'?navigator.userAgent:'N/A',bodyAttributeCount:bodyAttrs.length,hasExtensionAttrs,extensionAttrs:bodyAttrs.filter(attr=>attr.name.includes('__processed')||attr.name.includes('bis_')||attr.name.includes('inject_'))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+  }, []);
+  // #endregion
+  
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['ipc']));
+  
+  // #region agent log
+  useEffect(() => {
+    fetch('http://127.0.0.1:7245/ingest/805f12d4-c5d3-49bb-bec4-c34e003d25d3',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'bestlinks-dashboard/page.tsx:15',message:'State initialized',data:{openSectionsSize:openSections.size,openSectionsArray:Array.from(openSections)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+  }, []);
+  // #endregion
 
   const toggleSection = (sectionId: string) => {
     setOpenSections(prev => {
