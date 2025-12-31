@@ -1,24 +1,10 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function BestLinksDashboardPage() {
-  // #region agent log
-  useEffect(() => {
-    const bodyAttrs = Array.from(document.body.attributes).map(attr => ({ name: attr.name, value: attr.value.substring(0, 50) }));
-    const hasExtensionAttrs = bodyAttrs.some(attr => attr.name.includes('__processed') || attr.name.includes('bis_') || attr.name.includes('inject_'));
-    fetch('http://127.0.0.1:7245/ingest/805f12d4-c5d3-49bb-bec4-c34e003d25d3',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'bestlinks-dashboard/page.tsx:9',message:'Component mounted on client',data:{hasWindow:typeof window!=='undefined',userAgent:typeof navigator!=='undefined'?navigator.userAgent:'N/A',bodyAttributeCount:bodyAttrs.length,hasExtensionAttrs,extensionAttrs:bodyAttrs.filter(attr=>attr.name.includes('__processed')||attr.name.includes('bis_')||attr.name.includes('inject_'))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-  }, []);
-  // #endregion
-  
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['ipc']));
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
-  
-  // #region agent log
-  useEffect(() => {
-    fetch('http://127.0.0.1:7245/ingest/805f12d4-c5d3-49bb-bec4-c34e003d25d3',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'bestlinks-dashboard/page.tsx:15',message:'State initialized',data:{openSectionsSize:openSections.size,openSectionsArray:Array.from(openSections)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-  }, []);
-  // #endregion
 
   const toggleSection = (sectionId: string) => {
     setOpenSections(prev => {
@@ -47,6 +33,14 @@ export default function BestLinksDashboardPage() {
     } else {
       setOpenSections(new Set(['ipc', 'techom', 'danesya', 'zoolu', 'mhaim']));
     }
+  };
+
+  // חישוב סטטיסטיקות מעודכנות
+  const stats = {
+    total: 12 + 42 + 15 + 10 + 4, // מחסן + זולו + דנסיה + טקהום + IPC
+    published: 2 + 4 + 4 + 10 + 1, // לפי הנתונים המעודכנים
+    scheduled: 4 + 5 + 3 + 0 + 3,
+    budget: '105K₪'
   };
 
   return (
@@ -250,12 +244,6 @@ export default function BestLinksDashboardPage() {
           animation-fill-mode: both;
         }
         
-        .client-section:nth-child(1) { animation-delay: 0.2s; }
-        .client-section:nth-child(2) { animation-delay: 0.3s; }
-        .client-section:nth-child(3) { animation-delay: 0.4s; }
-        .client-section:nth-child(4) { animation-delay: 0.5s; }
-        .client-section:nth-child(5) { animation-delay: 0.6s; }
-        
         .client-header {
           padding: 25px 30px;
           display: flex;
@@ -458,59 +446,23 @@ export default function BestLinksDashboardPage() {
           box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
         }
         
-        .timeline {
-          padding: 30px;
+        .collapse-content {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.5s ease;
         }
         
-        .timeline-title {
-          font-size: 1.3rem;
-          font-weight: 600;
-          margin-bottom: 25px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
+        .collapse-content.active {
+          max-height: 5000px;
         }
         
-        .timeline-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 15px;
+        .collapse-toggle {
+          transition: transform 0.3s ease;
+          font-size: 1.2rem;
         }
         
-        .timeline-item {
-          background: rgba(15, 23, 42, 0.6);
-          border-radius: 16px;
-          padding: 20px;
-          border-right: 4px solid;
-          transition: all 0.3s ease;
-        }
-        
-        .timeline-item:hover {
-          transform: translateX(-5px);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .timeline-item.ipc { border-color: #6366f1; }
-        .timeline-item.techom { border-color: #ef4444; }
-        .timeline-item.danesya { border-color: #f59e0b; }
-        .timeline-item.zoolu { border-color: #10b981; }
-        .timeline-item.mhaim { border-color: #ec4899; }
-        
-        .timeline-date {
-          font-size: 1.1rem;
-          font-weight: 700;
-          margin-bottom: 8px;
-        }
-        
-        .timeline-client {
-          font-size: 0.85rem;
-          color: #94a3b8;
-          margin-bottom: 5px;
-        }
-        
-        .timeline-article {
-          font-size: 0.95rem;
-          line-height: 1.4;
+        .collapse-toggle.active {
+          transform: rotate(180deg);
         }
         
         .progress-container {
@@ -529,36 +481,6 @@ export default function BestLinksDashboardPage() {
           height: 100%;
           border-radius: 10px;
           transition: width 1s ease;
-          animation: progressAnimation 2s ease-out;
-        }
-        
-        @keyframes progressAnimation {
-          from { width: 0; }
-        }
-        
-        .progress-fill.ipc { background: linear-gradient(90deg, #6366f1, #8b5cf6); width: 23%; }
-        .progress-fill.techom { background: linear-gradient(90deg, #10b981, #34d399); width: 100%; }
-        .progress-fill.danesya { background: linear-gradient(90deg, #f59e0b, #fbbf24); width: 93%; }
-        .progress-fill.zoolu { background: linear-gradient(90deg, #3b82f6, #60a5fa); width: 12%; }
-        .progress-fill.mhaim { background: linear-gradient(90deg, #ec4899, #f472b6); width: 50%; }
-        
-        .collapse-content {
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.5s ease;
-        }
-        
-        .collapse-content.active {
-          max-height: 2000px;
-        }
-        
-        .collapse-toggle {
-          transition: transform 0.3s ease;
-          font-size: 1.2rem;
-        }
-        
-        .collapse-toggle.active {
-          transform: rotate(180deg);
         }
         
         .bestlinks-footer {
@@ -568,28 +490,13 @@ export default function BestLinksDashboardPage() {
           font-size: 0.9rem;
         }
         
-        .glow {
-          animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-          from { text-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
-          to { text-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 30px rgba(236, 72, 153, 0.6); }
-        }
-        
         .team-alert {
           background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2));
           border: 2px solid rgba(245, 158, 11, 0.5);
           border-radius: 16px;
           padding: 20px 30px;
           margin-bottom: 30px;
-          animation: pulseAlert 2s infinite;
           box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
-        }
-        
-        @keyframes pulseAlert {
-          0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
-          50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
         }
         
         .team-alert h3 {
@@ -597,9 +504,6 @@ export default function BestLinksDashboardPage() {
           font-weight: 700;
           margin-bottom: 10px;
           color: #fbbf24;
-          display: flex;
-          align-items: center;
-          gap: 10px;
         }
         
         .team-alert p {
@@ -621,7 +525,6 @@ export default function BestLinksDashboardPage() {
           gap: 10px;
           flex-wrap: wrap;
           justify-content: center;
-          align-items: center;
         }
         
         .client-selector-btn {
@@ -634,14 +537,10 @@ export default function BestLinksDashboardPage() {
           cursor: pointer;
           transition: all 0.3s ease;
           font-size: 0.9rem;
-          display: flex;
-          align-items: center;
-          gap: 8px;
         }
         
         .client-selector-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .client-selector-btn.active {
@@ -656,11 +555,15 @@ export default function BestLinksDashboardPage() {
         .client-selector-btn.mhaim { color: #f472b6; }
         .client-selector-btn.all { color: #60a5fa; }
         
+        .client-section.hidden {
+          display: none;
+        }
+        
         .client-links-section {
           padding: 20px 30px;
           background: rgba(15, 23, 42, 0.5);
           border-radius: 12px;
-          margin-bottom: 20px;
+          margin: 0 30px 20px;
           border: 1px solid rgba(99, 102, 241, 0.3);
         }
         
@@ -668,10 +571,6 @@ export default function BestLinksDashboardPage() {
           font-size: 1.1rem;
           font-weight: 700;
           margin-bottom: 15px;
-          color: #e2e8f0;
-          display: flex;
-          align-items: center;
-          gap: 10px;
         }
         
         .client-links-buttons {
@@ -685,17 +584,7 @@ export default function BestLinksDashboardPage() {
           border-radius: 10px;
           text-decoration: none;
           font-weight: 600;
-          font-size: 0.95rem;
           transition: all 0.3s ease;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          border: 2px solid transparent;
-        }
-        
-        .doc-link-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
         
         .doc-link-btn.planning {
@@ -706,97 +595,17 @@ export default function BestLinksDashboardPage() {
         .doc-link-btn.seo {
           background: linear-gradient(135deg, #10b981, #34d399);
           color: white;
-          border-color: #34d399;
-          box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
         
-        .doc-link-btn.seo:hover {
-          box-shadow: 0 5px 25px rgba(16, 185, 129, 0.6);
-        }
-        
-        .doc-explanation {
-          margin-top: 15px;
-          padding: 15px;
-          background: rgba(30, 41, 59, 0.6);
-          border-radius: 8px;
-          border-right: 4px solid;
-          font-size: 0.9rem;
-          line-height: 1.6;
-        }
-        
-        .doc-explanation.planning { border-color: #60a5fa; }
-        .doc-explanation.seo { border-color: #34d399; }
-        
-        .doc-explanation h4 {
-          font-size: 1rem;
-          font-weight: 700;
-          margin-bottom: 8px;
-        }
-        
-        .doc-explanation ul {
-          margin: 8px 0;
-          padding-right: 20px;
-        }
-        
-        .doc-explanation li {
-          margin: 5px 0;
-          color: #cbd5e1;
-        }
-        
-        .client-section.hidden {
-          display: none;
-        }
-        
-          @media (max-width: 768px) {
-          .bestlinks-header h1 {
-            font-size: 2rem;
-          }
-          
-          .client-header {
-            flex-direction: column;
-            gap: 20px;
-          }
-          
-          .client-stats {
-            width: 100%;
-            justify-content: space-around;
-            flex-wrap: wrap;
-          }
-          
-          .articles-table {
-            display: block;
-            overflow-x: auto;
-          }
-          
-          .summary-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .client-selector {
-            padding: 10px 15px;
-            overflow-x: auto;
-            justify-content: flex-start;
-          }
-          
-          .client-selector-btn {
-            font-size: 0.85rem;
-            padding: 8px 16px;
-            white-space: nowrap;
-          }
-          
-          .client-links-buttons {
-            flex-direction: column;
-          }
-          
-          .doc-link-btn {
-            width: 100%;
-            justify-content: center;
-          }
+        @media (max-width: 768px) {
+          .bestlinks-header h1 { font-size: 2rem; }
+          .client-header { flex-direction: column; gap: 20px; }
+          .client-stats { width: 100%; justify-content: space-around; flex-wrap: wrap; }
+          .articles-table { display: block; overflow-x: auto; }
         }
       `}</style>
 
       <div className="bestlinks-dashboard">
-        {/* Animated Background */}
         <div className="bg-animation">
           <span></span><span></span><span></span><span></span><span></span>
           <span></span><span></span><span></span><span></span><span></span>
@@ -805,19 +614,15 @@ export default function BestLinksDashboardPage() {
         <div className="bestlinks-container">
           {/* Header */}
           <header className="bestlinks-header">
-            <h1 className="glow">📊 דאשבורד מאמרי בסטלינקס</h1>
+            <h1>📊 דאשבורד מאמרי בסטלינקס</h1>
             <p>מעקב סטטוס פרסום מאמרים לאתרי מדיה</p>
-            <div className="last-update">🕐 עדכון אחרון: 29 דצמבר 2025</div>
+            <div className="last-update">🕐 עדכון אחרון: 31 דצמבר 2025</div>
           </header>
 
           {/* Team Alert */}
           <div className="team-alert">
             <h3>⚠️ חשוב לצוות: עדכון מסמכי קידום</h3>
             <p><strong>לאחר כל פרסום מאמר בסטלינקס, יש לעדכן את מסמכי הקידום (Google Docs) עם הלינק החדש!</strong></p>
-            <p>After every article is published, add the link to the client's SEO Document!</p>
-            <p style={{ marginTop: '10px', fontSize: '0.9rem', opacity: 0.9 }}>
-              מסמכי הקידום הם המסירה העיקרית ללקוחות - הם מכילים את כל הלינקים שמצביעים לאתרי הלקוחות.
-            </p>
           </div>
 
           {/* Client Selector */}
@@ -829,22 +634,10 @@ export default function BestLinksDashboardPage() {
               📋 הכל
             </button>
             <button 
-              className={`client-selector-btn ipc ${selectedClient === 'ipc' ? 'active' : ''}`}
-              onClick={() => handleClientSelect('ipc')}
+              className={`client-selector-btn mhaim ${selectedClient === 'mhaim' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('mhaim')}
             >
-              🎓 IPC
-            </button>
-            <button 
-              className={`client-selector-btn techom ${selectedClient === 'techom' ? 'active' : ''}`}
-              onClick={() => handleClientSelect('techom')}
-            >
-              🔐 טקהום
-            </button>
-            <button 
-              className={`client-selector-btn danesya ${selectedClient === 'danesya' ? 'active' : ''}`}
-              onClick={() => handleClientSelect('danesya')}
-            >
-              🏠 דנסיה
+              🐾 המחסן של חיים
             </button>
             <button 
               className={`client-selector-btn zoolu ${selectedClient === 'zoolu' ? 'active' : ''}`}
@@ -853,10 +646,22 @@ export default function BestLinksDashboardPage() {
               🦁 זולו
             </button>
             <button 
-              className={`client-selector-btn mhaim ${selectedClient === 'mhaim' ? 'active' : ''}`}
-              onClick={() => handleClientSelect('mhaim')}
+              className={`client-selector-btn danesya ${selectedClient === 'danesya' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('danesya')}
             >
-              🐾 המחסן של חיים
+              🏠 דנסיה
+            </button>
+            <button 
+              className={`client-selector-btn techom ${selectedClient === 'techom' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('techom')}
+            >
+              🔐 טקהום
+            </button>
+            <button 
+              className={`client-selector-btn ipc ${selectedClient === 'ipc' ? 'active' : ''}`}
+              onClick={() => handleClientSelect('ipc')}
+            >
+              🎓 IPC
             </button>
           </div>
 
@@ -864,17 +669,17 @@ export default function BestLinksDashboardPage() {
           <div className="summary-grid">
             <div className="summary-card">
               <div className="icon icon-total">📄</div>
-              <div className="number">92</div>
+              <div className="number">78</div>
               <div className="label">סה"כ מאמרים</div>
             </div>
             <div className="summary-card">
               <div className="icon icon-published">✅</div>
-              <div className="number">14</div>
+              <div className="number">23</div>
               <div className="label">פורסמו</div>
             </div>
             <div className="summary-card">
               <div className="icon icon-scheduled">📅</div>
-              <div className="number">37</div>
+              <div className="number">14</div>
               <div className="label">תוזמנו</div>
             </div>
             <div className="summary-card">
@@ -884,14 +689,14 @@ export default function BestLinksDashboardPage() {
             </div>
           </div>
 
-          {/* IPC Section */}
-          <section id="client-ipc" className={`client-section ${selectedClient && selectedClient !== 'ipc' ? 'hidden' : ''}`}>
-            <div className="client-header" onClick={() => toggleSection('ipc')}>
+          {/* המחסן של חיים Section */}
+          <section id="client-mhaim" className={`client-section ${selectedClient && selectedClient !== 'mhaim' ? 'hidden' : ''}`}>
+            <div className="client-header" onClick={() => toggleSection('mhaim')}>
               <div className="client-info">
-                <div className="client-icon ipc">🎓</div>
+                <div className="client-icon mhaim">🐾</div>
                 <div className="client-name">
-                  <h2>IPC - המכללה</h2>
-                  <p>איש קשר: אוהד | קורסים מקצועיים</p>
+                  <h2>המחסן של חיים</h2>
+                  <p>קבוצת מילאטין | חנות חיות</p>
                 </div>
               </div>
               <div className="client-stats">
@@ -900,67 +705,33 @@ export default function BestLinksDashboardPage() {
                   <div className="stat-label">פורסמו</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-value scheduled">11</div>
-                  <div className="stat-label">ממתינים</div>
+                  <div className="stat-value scheduled">3</div>
+                  <div className="stat-label">תוזמנו</div>
                 </div>
                 <div className="stat">
-                  <div className="payment-status payment-paid">✅ שולם 18,100₪</div>
+                  <div className="stat-value pending">6</div>
+                  <div className="stat-label">צריך לכתוב</div>
                 </div>
-                <div className={`collapse-toggle ${openSections.has('ipc') ? 'active' : ''}`}>▼</div>
+                <div className="stat">
+                  <div className="payment-status payment-paid">✅ שולם ~35K₪</div>
+                </div>
+                <div className={`collapse-toggle ${openSections.has('mhaim') ? 'active' : ''}`}>▼</div>
               </div>
             </div>
             
             <div className="progress-container" style={{ padding: '0 30px' }}>
-              <small>התקדמות: 3/14 מאמרים (21%)</small>
+              <small>התקדמות: 3/12 מאמרים (25%)</small>
               <div className="progress-bar">
-                <div className="progress-fill ipc"></div>
+                <div className="progress-fill" style={{ width: '25%', background: 'linear-gradient(90deg, #ec4899, #f472b6)' }}></div>
               </div>
             </div>
             
-            <div className={`collapse-content ${openSections.has('ipc') ? 'active' : ''}`}>
-              {/* Client Quick Links */}
+            <div className={`collapse-content ${openSections.has('mhaim') ? 'active' : ''}`}>
               <div className="client-links-section">
-                <div className="client-links-title">📎 קישורים מהירים - IPC</div>
+                <div className="client-links-title">📎 קישורים מהירים - המחסן של חיים</div>
                 <div className="client-links-buttons">
-                  <a 
-                    href="https://docs.google.com/spreadsheets/d/18OPxjYa3JEM4M198Mh7QPPVGbRT4EnFTbZbiFziFLaA/edit?gid=0#gid=0" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn planning"
-                  >
-                    📊 טבלת תכנון
-                  </a>
-                  <a 
-                    href="https://docs.google.com/document/d/1FE66e0rgAdJTuAb70M1-YHZtcWhOmaFLe_Y9e6uyRrU/edit?usp=sharing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn seo"
-                  >
-                    📄 מסמך לינקים (עדכן כאן!)
-                  </a>
-                </div>
-                <div className="doc-explanation planning">
-                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
-                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
-                  <ul>
-                    <li>כותרות מאמרים ונושאים</li>
-                    <li>אתרי מדיה יעד</li>
-                    <li>תאריכי פרסום/תזמון</li>
-                    <li>סטטוס (נכתב, אושר, פורסם)</li>
-                    <li>מחירים ותקציבים</li>
-                  </ul>
-                </div>
-                <div className="doc-explanation seo">
-                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
-                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
-                  <ul>
-                    <li>כל הלינקים ממאמרים שפורסמו</li>
-                    <li>URL + טקסט עוגן (anchor text)</li>
-                    <li>מאורגן לפי קמפיין/אצווה</li>
-                  </ul>
-                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
-                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
-                  </p>
+                  <a href="https://docs.google.com/spreadsheets/d/1SafY06BwYyUDXoJhARAp2ngGdSjJjra8/edit?gid=189942519#gid=189942519" target="_blank" rel="noopener noreferrer" className="doc-link-btn planning">📊 טבלת תכנון</a>
+                  <a href="https://docs.google.com/document/d/1zygB3DF3NI6pUX2nqRWngUf-RpV3VGG_dL6jaNRN9js/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="doc-link-btn seo">📄 מסמך לינקים</a>
                 </div>
               </div>
               <div className="articles-container">
@@ -968,110 +739,109 @@ export default function BestLinksDashboardPage() {
                   <thead>
                     <tr>
                       <th>#</th>
+                      <th>כותרת</th>
+                      <th>אתר</th>
+                      <th>DR</th>
+                      <th>מחיר</th>
                       <th>סטטוס</th>
-                      <th>תאריך</th>
-                      <th>אתר מפרסם</th>
-                      <th>קישור</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td><span className="status-badge status-published">✅ פורסם</span></td>
-                      <td className="article-date">29/12/2025</td>
-                      <td className="article-site">tgspot.co.il</td>
-                      <td><a href="https://www.tgspot.co.il/ipc-college-comments-on-the-business-accounting-course/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 צפייה</a></td>
+                      <td className="article-title">המדריך המלא איך לבחור מזון לבעלי חיים</td>
+                      <td className="article-site">food.walla.co.il</td>
+                      <td><span className="dr-badge">83</span></td>
+                      <td className="article-price">3,648₪</td>
+                      <td><a href="https://food.walla.co.il/item/3802343?r=1" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
                     </tr>
                     <tr>
                       <td>2</td>
-                      <td><span className="status-badge status-published">✅ פורסם</span></td>
-                      <td className="article-date">28/12/2025</td>
-                      <td className="article-site">israelhayom.co.il</td>
-                      <td><a href="https://www.israelhayom.co.il/you-may-find-interesting/article/19553772" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 צפייה</a></td>
+                      <td className="article-title">איך לבחור שימורים לכלבים שמתאימים לגיל ולצרכים</td>
+                      <td className="article-site">hashulchan.co.il</td>
+                      <td><span className="dr-badge">53</span></td>
+                      <td className="article-price">1,440₪</td>
+                      <td><a href="https://www.hashulchan.co.il/ppost/%d7%90%d7%99%d7%9a-%d7%9c%d7%91%d7%97%d7%95%d7%a8-%d7%a9%d7%99%d7%9e%d7%95%d7%a8%d7%99%d7%9d-%d7%9c%d7%9b%d7%9c%d7%91%d7%99%d7%9d-%d7%a9%d7%9e%d7%aa%d7%90%d7%99%d7%9e%d7%99%d7%9d-%d7%9c%d7%92%d7%99/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
                     </tr>
                     <tr>
                       <td>3</td>
-                      <td><span className="status-badge status-published">✅ פורסם</span></td>
-                      <td className="article-date">25/12/2025</td>
-                      <td className="article-site">tech.walla.co.il</td>
-                      <td><a href="https://tech.walla.co.il/item/3804030" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 צפייה</a></td>
+                      <td className="article-title">חול לחתולים שגורם לבית להישאר נקי וריחני</td>
+                      <td className="article-site">mako.co.il</td>
+                      <td><span className="dr-badge">83</span></td>
+                      <td className="article-price">7,200₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 1.1.26</span></td>
                     </tr>
                     <tr>
                       <td>4</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לפרסום</span></td>
-                      <td>---</td>
-                      <td className="article-site">thestudent.co.il</td>
-                      <td>---</td>
+                      <td className="article-title">אוכל לגורים המדריך המלא להאכלת גורי כלבים</td>
+                      <td className="article-site">foodis.co.il</td>
+                      <td><span className="dr-badge">47</span></td>
+                      <td className="article-price">768₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 8.1.26</span></td>
                     </tr>
                     <tr>
                       <td>5</td>
-                      <td><span className="status-badge status-waiting">🔄 מחכה לתוכן</span></td>
-                      <td>---</td>
-                      <td className="article-site">limudim-index.co.il</td>
-                      <td>---</td>
+                      <td className="article-title">מחנות חיות רגילה לאימפריה – הסיפור של המחסן של חיים</td>
+                      <td className="article-site">globes.co.il</td>
+                      <td><span className="dr-badge">83</span></td>
+                      <td className="article-price">5,760₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 15.1.26</span></td>
                     </tr>
                     <tr>
                       <td>6</td>
-                      <td><span className="status-badge status-waiting">🔄 מחכה לתוכן</span></td>
-                      <td>---</td>
-                      <td className="article-site">applications.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>7</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לפרסום</span></td>
-                      <td>---</td>
-                      <td className="article-site">hwzone.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>8</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לפרסום</span></td>
-                      <td>---</td>
-                      <td className="article-site">hon.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>9</td>
-                      <td><span className="status-badge status-waiting">🔄 מחכה לתוכן</span></td>
-                      <td>---</td>
-                      <td className="article-site">sponser.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>10</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לפרסום</span></td>
-                      <td>---</td>
-                      <td className="article-site">timeout.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>11</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לפרסום</span></td>
-                      <td>---</td>
-                      <td className="article-site">bhol.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>12</td>
-                      <td><span className="status-badge status-waiting">🔄 מחכה לתוכן</span></td>
-                      <td>---</td>
-                      <td className="article-site">news1.co.il</td>
-                      <td>---</td>
-                    </tr>
-                    <tr>
-                      <td>13</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לפרסום</span></td>
-                      <td>---</td>
+                      <td className="article-title">פתרונות חסכוניים להאכלת חתולי רחוב בזול</td>
                       <td className="article-site">bizportal.co.il</td>
-                      <td>---</td>
+                      <td><span className="dr-badge">73</span></td>
+                      <td className="article-price">864₪</td>
+                      <td><a href="https://www.bizportal.co.il/bizpoint-sponsored/news/article/20025237" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
                     </tr>
-                    <tr>
-                      <td>14</td>
-                      <td><span className="status-badge status-pending">⏳ ממתין לתוכן</span></td>
-                      <td>---</td>
-                      <td className="article-site">maariv.co.il</td>
-                      <td>---</td>
+                    <tr style={{ opacity: 0.6 }}>
+                      <td>7</td>
+                      <td className="article-title">אוכל לגורים הוא ההוצאה הקטנה שמונעת עלויות גדולות</td>
+                      <td className="article-site">hon.co.il</td>
+                      <td><span className="dr-badge">46</span></td>
+                      <td className="article-price">864₪</td>
+                      <td><span className="status-badge status-waiting">✏️ צריך לכתוב</span></td>
+                    </tr>
+                    <tr style={{ opacity: 0.6 }}>
+                      <td>8</td>
+                      <td className="article-title">מדריך רכישה: חיתולים לכלבים</td>
+                      <td className="article-site">magazine.yad2.co.il</td>
+                      <td><span className="dr-badge">68</span></td>
+                      <td className="article-price">807₪</td>
+                      <td><span className="status-badge status-waiting">✏️ צריך לכתוב</span></td>
+                    </tr>
+                    <tr style={{ opacity: 0.6 }}>
+                      <td>9</td>
+                      <td className="article-title">המחסן של חיים בראשון לציון</td>
+                      <td className="article-site">13tv.co.il</td>
+                      <td><span className="dr-badge">76</span></td>
+                      <td className="article-price">1,536₪</td>
+                      <td><span className="status-badge status-waiting">✏️ צריך לכתוב</span></td>
+                    </tr>
+                    <tr style={{ opacity: 0.6 }}>
+                      <td>10</td>
+                      <td className="article-title">חנות חיות אונליין עם משלוחים מהירים</td>
+                      <td className="article-site">il.pcmag.com</td>
+                      <td><span className="dr-badge">91</span></td>
+                      <td className="article-price">336₪</td>
+                      <td><span className="status-badge status-waiting">✏️ צריך לכתוב</span></td>
+                    </tr>
+                    <tr style={{ opacity: 0.6 }}>
+                      <td>11</td>
+                      <td className="article-title">איפה מוצאים מונג' במבצע</td>
+                      <td className="article-site">finance.walla.co.il</td>
+                      <td><span className="dr-badge">83</span></td>
+                      <td className="article-price">3,648₪</td>
+                      <td><span className="status-badge status-waiting">✏️ צריך לכתוב</span></td>
+                    </tr>
+                    <tr style={{ opacity: 0.6 }}>
+                      <td>12</td>
+                      <td className="article-title">איזה אוכל לכלבים מומלץ</td>
+                      <td className="article-site">foodsdictionary.co.il</td>
+                      <td><span className="dr-badge">52</span></td>
+                      <td className="article-price">1,344₪</td>
+                      <td><span className="status-badge status-waiting">✏️ צריך לכתוב</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -1079,7 +849,551 @@ export default function BestLinksDashboardPage() {
             </div>
           </section>
 
-          {/* Techom Section */}
+          {/* זולו Section */}
+          <section id="client-zoolu" className={`client-section ${selectedClient && selectedClient !== 'zoolu' ? 'hidden' : ''}`}>
+            <div className="client-header" onClick={() => toggleSection('zoolu')}>
+              <div className="client-info">
+                <div className="client-icon zoolu">🦁</div>
+                <div className="client-name">
+                  <h2>זולו - חנות חיות</h2>
+                  <p>קבוצת מילאטין | ציוד ומזון לבע"ח</p>
+                </div>
+              </div>
+              <div className="client-stats">
+                <div className="stat">
+                  <div className="stat-value published">3</div>
+                  <div className="stat-label">פורסמו</div>
+                </div>
+                <div className="stat">
+                  <div className="stat-value scheduled">2</div>
+                  <div className="stat-label">תוזמנו</div>
+                </div>
+                <div className="stat">
+                  <div className="stat-value pending">32</div>
+                  <div className="stat-label">מאושרים</div>
+                </div>
+                <div className="stat">
+                  <div className="payment-status payment-paid">✅ שולם ~22K₪</div>
+                </div>
+                <div className={`collapse-toggle ${openSections.has('zoolu') ? 'active' : ''}`}>▼</div>
+              </div>
+            </div>
+            
+            <div className="progress-container" style={{ padding: '0 30px' }}>
+              <small>התקדמות: 3/37 מאמרים (8%)</small>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: '8%', background: 'linear-gradient(90deg, #10b981, #34d399)' }}></div>
+              </div>
+            </div>
+            
+            <div className={`collapse-content ${openSections.has('zoolu') ? 'active' : ''}`}>
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - זולו</div>
+                <div className="client-links-buttons">
+                  <a href="https://docs.google.com/spreadsheets/d/1BaLmOtVOlMPiNLI4RZDbW9kcAAAsY9Hd/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="doc-link-btn planning">📊 טבלת תכנון</a>
+                  <a href="https://docs.google.com/document/d/1TWSjlklfsfVclOkZ3BlYSo2WJikb0-rGSRo8-Zu4J4s/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="doc-link-btn seo">📄 מסמך לינקים</a>
+                </div>
+              </div>
+              <div className="articles-container">
+                <table className="articles-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>כותרת</th>
+                      <th>אתר</th>
+                      <th>DR</th>
+                      <th>מחיר</th>
+                      <th>סטטוס</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td className="article-title">זולו – חנות חיות שגדלה יחד עם קהילת בעלי החיים</td>
+                      <td className="article-site">maariv.co.il</td>
+                      <td><span className="dr-badge">79</span></td>
+                      <td className="article-price">1,785₪</td>
+                      <td><a href="https://www.maariv.co.il/economy/consumerism/article-1264769" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td className="article-title">אמפולות נגד פרעושים לחתולים – חלק ממערך הדברה חכם</td>
+                      <td className="article-site">tudu.co.il</td>
+                      <td><span className="dr-badge">20</span></td>
+                      <td className="article-price">192₪</td>
+                      <td><a href="https://tudu.co.il/%d7%90%d7%9e%d7%a4%d7%95%d7%9c%d7%95%d7%aa-%d7%a0%d7%92%d7%93-%d7%a4%d7%a8%d7%a2%d7%95%d7%a9%d7%99%d7%9d-%d7%9c%d7%97%d7%aa%d7%95%d7%9c%d7%99%d7%9d-%d7%97%d7%9c%d7%a7-%d7%9e%d7%9e%d7%a2/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td className="article-title">אוכל לחתולים במשלוח: מדריך בטוח לשליחויות</td>
+                      <td className="article-site">dtdc.co.il</td>
+                      <td><span className="dr-badge">41</span></td>
+                      <td className="article-price">192₪</td>
+                      <td><a href="https://dtdc.co.il/%d7%90%d7%95%d7%9b%d7%9c-%d7%9c%d7%97%d7%aa%d7%95%d7%9c%d7%99%d7%9d-%d7%91%d7%9e%d7%a9%d7%9c%d7%95%d7%97-%d7%9e%d7%93%d7%a8%d7%99%d7%9a-%d7%91%d7%98%d7%95%d7%97-%d7%9c%d7%a9%d7%9c%d7%99%d7%97%d7%95/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td className="article-title">אוכל רפואי לכלבים – מתי ולמה כדאי להשתמש</td>
+                      <td className="article-site">kumba.co.il</td>
+                      <td><span className="dr-badge">24</span></td>
+                      <td className="article-price">240₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 30.12</span></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td className="article-title">איפה כדאי לקנות אוכל לחתולים זול אונליין או אופליין</td>
+                      <td className="article-site">smartcapital.co.il</td>
+                      <td><span className="dr-badge">16</span></td>
+                      <td className="article-price">192₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 1.1</span></td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td className="article-title">איך לחסוך בקניית אוכל זול לכלבים בלי לפגוע באיכות</td>
+                      <td className="article-site">redesign.co.il</td>
+                      <td><span className="dr-badge">32</span></td>
+                      <td className="article-price">80₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td className="article-title">חנות חיות תל אביב – בריאות, צרכנות ואהבה לחיות</td>
+                      <td className="article-site">tlife.co.il</td>
+                      <td><span className="dr-badge">39</span></td>
+                      <td className="article-price">172₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td className="article-title">חנות כלבים תל אביב – היכן למצוא את כל מה שכלב צריך</td>
+                      <td className="article-site">telaviv-yafo.co.il</td>
+                      <td><span className="dr-badge">34</span></td>
+                      <td className="article-price">144₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td className="article-title">חנות חיות תל אביב משלוחים – נוחות עירונית</td>
+                      <td className="article-site">tlvcity.co.il</td>
+                      <td><span className="dr-badge">22</span></td>
+                      <td className="article-price">172₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>10</td>
+                      <td className="article-title">חנות חיות בחולון – איפה קונים חכמה ואהבה לבעלי החיים</td>
+                      <td className="article-site">holon.mynet.co.il</td>
+                      <td><span className="dr-badge">75</span></td>
+                      <td className="article-price">355₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>11</td>
+                      <td className="article-title">ציוד ומזון לחיות מחמד בזולו – נגישות, איכות וחדשנות</td>
+                      <td className="article-site">13tv.co.il</td>
+                      <td><span className="dr-badge">75</span></td>
+                      <td className="article-price">1,536₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>12</td>
+                      <td className="article-title">מהצלחת שלנו לקערה שלהם – החשיבות שבבחירת אוכל לכלבים</td>
+                      <td className="article-site">foodis.co.il</td>
+                      <td><span className="dr-badge">47</span></td>
+                      <td className="article-price">768₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>13</td>
+                      <td className="article-title">חנות החיות זולו – סיפור צרכנות מקומית</td>
+                      <td className="article-site">israelhayom.co.il</td>
+                      <td><span className="dr-badge">-</span></td>
+                      <td className="article-price">1,152₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>14</td>
+                      <td className="article-title">מיטה לכלב - איך לבחור מיטה נוחה ובריאה</td>
+                      <td className="article-site">findog.co.il</td>
+                      <td><span className="dr-badge">79</span></td>
+                      <td className="article-price">576₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>15</td>
+                      <td className="article-title">אוכל לכלבים כשר לפסח - איך לבחור מזון מתאים</td>
+                      <td className="article-site">bhol.co.il</td>
+                      <td><span className="dr-badge">29</span></td>
+                      <td className="article-price">384₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>16</td>
+                      <td className="article-title">מה לא לשכוח כשנוסעים עם חיית מחמד</td>
+                      <td className="article-site">praguehotels.co.il</td>
+                      <td><span className="dr-badge">48</span></td>
+                      <td className="article-price">400₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>17</td>
+                      <td className="article-title">מלונות באירופה שמקבלים חיות מחמד</td>
+                      <td className="article-site">athenshotels.co.il</td>
+                      <td><span className="dr-badge">32</span></td>
+                      <td className="article-price">400₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>18</td>
+                      <td className="article-title">אוכל לכלבים תל אביב - איך בוחרים נכון</td>
+                      <td className="article-site">tlv.mcity.co.il</td>
+                      <td><span className="dr-badge">31</span></td>
+                      <td className="article-price">124₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>19</td>
+                      <td className="article-title">חנות חיות בדרום תל אביב</td>
+                      <td className="article-site">tel-avivi.co.il</td>
+                      <td><span className="dr-badge">42</span></td>
+                      <td className="article-price">80₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>20</td>
+                      <td className="article-title">מזון רטוב לחתולים - טעמים, מרקמים ובריאות</td>
+                      <td className="article-site">hashulchan.co.il</td>
+                      <td><span className="dr-badge">31</span></td>
+                      <td className="article-price">1,440₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>21</td>
+                      <td className="article-title">שימורים לחתולים - כל מה שצריך לדעת</td>
+                      <td className="article-site">foodsdictionary.co.il</td>
+                      <td><span className="dr-badge">45</span></td>
+                      <td className="article-price">1,344₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>22</td>
+                      <td className="article-title">שלוקים לחתולים - הפינוק הבריא</td>
+                      <td className="article-site">dafmatok.co.il</td>
+                      <td><span className="dr-badge">62</span></td>
+                      <td className="article-price">432₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>23</td>
+                      <td className="article-title">חנות חיות סוקולוב חולון</td>
+                      <td className="article-site">hb.mcity.co.il</td>
+                      <td><span className="dr-badge">51</span></td>
+                      <td className="article-price">124₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>24</td>
+                      <td className="article-title">חנות חיות רמת גן</td>
+                      <td className="article-site">rg.mcity.co.il</td>
+                      <td><span className="dr-badge">42</span></td>
+                      <td className="article-price">124₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>25</td>
+                      <td className="article-title">חנות חיות בגבעתיים - מזון, ציוד וטיפול מקצועי</td>
+                      <td className="article-site">rgg-news.co.il</td>
+                      <td><span className="dr-badge">42</span></td>
+                      <td className="article-price">240₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>26</td>
+                      <td className="article-title">מזון רפואי לכלבים - איך לבחור תזונה מותאמת</td>
+                      <td className="article-site">doctordolittle.co.il</td>
+                      <td><span className="dr-badge">37</span></td>
+                      <td className="article-price">768₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>27</td>
+                      <td className="article-title">מתקן גירוד לגינה – פתרון מושלם לחתולים</td>
+                      <td className="article-site">mygardener.co.il</td>
+                      <td><span className="dr-badge">22</span></td>
+                      <td className="article-price">768₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>28</td>
+                      <td className="article-title">אוכל לדגי נוי – איך לבחור תזונה נכונה לאקווריום</td>
+                      <td className="article-site">marinadivers.co.il</td>
+                      <td><span className="dr-badge">19</span></td>
+                      <td className="article-price">768₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>29</td>
+                      <td className="article-title">קולר נגד פרעושים – איך לבחור הגנה יעילה</td>
+                      <td className="article-site">petsi.co.il</td>
+                      <td><span className="dr-badge">20</span></td>
+                      <td className="article-price">550₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>30</td>
+                      <td className="article-title">זולו תל אביב - חנות חיות עם מזון וציוד</td>
+                      <td className="article-site">telavivguide.net</td>
+                      <td><span className="dr-badge">27</span></td>
+                      <td className="article-price">432₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>31</td>
+                      <td className="article-title">אוכל לכלבים קטנים - איך לבחור תזונה נכונה</td>
+                      <td className="article-site">wisedog.co.il</td>
+                      <td><span className="dr-badge">30</span></td>
+                      <td className="article-price">384₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>32</td>
+                      <td className="article-title">חנות חיות ברמת גן – ציוד, מזון ושירות</td>
+                      <td className="article-site">ramatgan4u</td>
+                      <td><span className="dr-badge">28</span></td>
+                      <td className="article-price">115₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>33</td>
+                      <td className="article-title">חנות חיות אונליין - מזון, ציוד ומשלוחים</td>
+                      <td className="article-site">il.pcmag.com</td>
+                      <td><span className="dr-badge">25</span></td>
+                      <td className="article-price">336₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>34</td>
+                      <td className="article-title">השוואת מחירים אוכל לכלבים</td>
+                      <td className="article-site">bizportal.co.il</td>
+                      <td><span className="dr-badge">91</span></td>
+                      <td className="article-price">864₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>35</td>
+                      <td className="article-title">חנות חיות - איך לבחור את המקום הנכון</td>
+                      <td className="article-site">havafarm.co.il</td>
+                      <td><span className="dr-badge">73</span></td>
+                      <td className="article-price">192₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>36</td>
+                      <td className="article-title">כדור נגד פרעושים לכלבים - מדריך לבחירה</td>
+                      <td className="article-site">palm-weevil.co.il</td>
+                      <td><span className="dr-badge">14</span></td>
+                      <td className="article-price">192₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                    <tr>
+                      <td>37</td>
+                      <td className="article-title">מזון טבעי לכלבים - איך לבחור תזונה איכותית</td>
+                      <td className="article-site">lentrecote.co.il</td>
+                      <td><span className="dr-badge">14</span></td>
+                      <td className="article-price">192₪</td>
+                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          {/* דנסיה Section */}
+          <section id="client-danesya" className={`client-section ${selectedClient && selectedClient !== 'danesya' ? 'hidden' : ''}`}>
+            <div className="client-header" onClick={() => toggleSection('danesya')}>
+              <div className="client-info">
+                <div className="client-icon danesya">🏠</div>
+                <div className="client-name">
+                  <h2>דנסיה - נדל"ן דובאי</h2>
+                  <p>איש קשר: גבי | השקעות נדל"ן</p>
+                </div>
+              </div>
+              <div className="client-stats">
+                <div className="stat">
+                  <div className="stat-value published">6</div>
+                  <div className="stat-label">פורסמו</div>
+                </div>
+                <div className="stat">
+                  <div className="stat-value scheduled">6</div>
+                  <div className="stat-label">תוזמנו</div>
+                </div>
+                <div className="stat">
+                  <div className="stat-value pending">3</div>
+                  <div className="stat-label">ממתינים</div>
+                </div>
+                <div className="stat">
+                  <div className="payment-status payment-paid">✅ שולם</div>
+                </div>
+                <div className={`collapse-toggle ${openSections.has('danesya') ? 'active' : ''}`}>▼</div>
+              </div>
+            </div>
+            
+            <div className="progress-container" style={{ padding: '0 30px' }}>
+              <small>התקדמות: 6/15 מאמרים (40%)</small>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: '40%', background: 'linear-gradient(90deg, #f59e0b, #fbbf24)' }}></div>
+              </div>
+            </div>
+            
+            <div className={`collapse-content ${openSections.has('danesya') ? 'active' : ''}`}>
+              <div className="client-links-section">
+                <div className="client-links-title">📎 קישורים מהירים - דנסיה</div>
+                <div className="client-links-buttons">
+                  <a href="https://docs.google.com/spreadsheets/d/1yS9ynLV86z3YKn8VijJkTk5H6gXeAtcazCQ7LHHc8s0/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" className="doc-link-btn planning">📊 טבלת תכנון</a>
+                  <a href="https://docs.google.com/document/d/1qtGeX29OrCst246QHucOo7UPyms8JqTubIxfvSuweIo/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="doc-link-btn seo">📄 מסמך לינקים</a>
+                </div>
+              </div>
+              <div className="articles-container">
+                <table className="articles-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>כותרת</th>
+                      <th>אתר</th>
+                      <th>DR</th>
+                      <th>מחיר</th>
+                      <th>סטטוס</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td className="article-title">למי מתאימות השקעות נדלן בדובאי</td>
+                      <td className="article-site">ivalue.co.il</td>
+                      <td><span className="dr-badge">80</span></td>
+                      <td className="article-price">134₪</td>
+                      <td><a href="https://www.ivalue.co.il/%d7%9c%d7%9e%d7%99-%d7%9e%d7%aa%d7%90%d7%99%d7%9e%d7%95%d7%aa-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%a0%d7%93%d7%9c%d7%b4%d7%9f-%d7%91%d7%93%d7%95%d7%91%d7%90%d7%99/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td className="article-title">מחפשים נכס להשקעה מבחר דירות למכירה בדובאי</td>
+                      <td className="article-site">househunt.co.il</td>
+                      <td><span className="dr-badge">46</span></td>
+                      <td className="article-price">144₪</td>
+                      <td><a href="https://househunt.co.il/מחפשים-נכס-להשקעה-מבחר-דירות-למכירה-בד/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td className="article-title">למה השקעה בדובאי ולא במקומות אחרים</td>
+                      <td className="article-site">israelcalcali.co.il</td>
+                      <td><span className="dr-badge">36</span></td>
+                      <td className="article-price">144₪</td>
+                      <td><a href="https://www.israelcalcali.co.il/למה-השקעה-בדובאי-ולא-במקומות-אחרים-גלו/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td className="article-title">איך לבחור סוכנות של דירות להשקעה בדובאי</td>
+                      <td className="article-site">epoch.org.il</td>
+                      <td><span className="dr-badge">48</span></td>
+                      <td className="article-price">134₪</td>
+                      <td><a href="https://epoch.org.il/commercial/612575/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td className="article-title">מדריך ממוקד למשקיע דירות למכירה בדובאי</td>
+                      <td className="article-site">clickinvest.co.il</td>
+                      <td><span className="dr-badge">64</span></td>
+                      <td className="article-price">1,152₪</td>
+                      <td><a href="https://clickinvest.co.il/dubai-real-estate-investment/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td className="article-title">דירות בדובאי הסוד של המשקיעים מהדור החדש</td>
+                      <td className="article-site">bizportal.co.il</td>
+                      <td><span className="dr-badge">73</span></td>
+                      <td className="article-price">3,648₪</td>
+                      <td><a href="https://www.bizportal.co.il/bizpoint-sponsored/news/article/20025628" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td className="article-title">מתי הכי כדאי לקנות דירה בדובאי</td>
+                      <td className="article-site">mimoona.co.il</td>
+                      <td><span className="dr-badge">53</span></td>
+                      <td className="article-price">134₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 1.1.26</span></td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td className="article-title">8 טעויות שמשקיעים עושים ברכישת נדלן בדובאי</td>
+                      <td className="article-site">househunt.co.il</td>
+                      <td><span className="dr-badge">46</span></td>
+                      <td className="article-price">154₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 4.1</span></td>
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td className="article-title">6 טעויות שאתם עושים לגבי דירות להשקעה בדובאי</td>
+                      <td className="article-site">finance.walla.co.il</td>
+                      <td><span className="dr-badge">83</span></td>
+                      <td className="article-price">5,760₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 6.1</span></td>
+                    </tr>
+                    <tr>
+                      <td>10</td>
+                      <td className="article-title">כל מה שרציתם לדעת על השקעה בדובאי</td>
+                      <td className="article-site">ymag.ynet.co.il</td>
+                      <td><span className="dr-badge">86</span></td>
+                      <td className="article-price">864₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 8.1</span></td>
+                    </tr>
+                    <tr>
+                      <td>11</td>
+                      <td className="article-title">למה 2026 היא השנה הנכונה לנדלן דובאי</td>
+                      <td className="article-site">moneysite.co.il</td>
+                      <td><span className="dr-badge">40</span></td>
+                      <td className="article-price">1,400₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 13.1</span></td>
+                    </tr>
+                    <tr>
+                      <td>12</td>
+                      <td className="article-title">השקעות נדלן בדובאי איך מתחילים נכון</td>
+                      <td className="article-site">babyfinance.co.il</td>
+                      <td><span className="dr-badge">48</span></td>
+                      <td className="article-price">288₪</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 20.1</span></td>
+                    </tr>
+                    <tr>
+                      <td>13</td>
+                      <td className="article-title">למה משקיעים מכוונים היום לדירות בדובאי</td>
+                      <td className="article-site">mygoldi.co.il</td>
+                      <td><span className="dr-badge">48</span></td>
+                      <td className="article-price">134₪</td>
+                      <td><span className="status-badge status-pending">⏳ ממתין</span></td>
+                    </tr>
+                    <tr>
+                      <td>14</td>
+                      <td className="article-title">נדל"ן בדובאי: הטרנד שסוחף ישראלים</td>
+                      <td className="article-site">globes.co.il</td>
+                      <td><span className="dr-badge">83</span></td>
+                      <td className="article-price">960₪</td>
+                      <td><span className="status-badge status-pending">⏳ ממתין</span></td>
+                    </tr>
+                    <tr>
+                      <td>15</td>
+                      <td className="article-title">חולמים על דירה בדובאי כך תגשימו את החלום</td>
+                      <td className="article-site">nadlan2.co.il</td>
+                      <td><span className="dr-badge">68</span></td>
+                      <td className="article-price">173₪</td>
+                      <td><span className="status-badge status-pending">⏳ ממתין</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          {/* טקהום Section */}
           <section id="client-techom" className={`client-section ${selectedClient && selectedClient !== 'techom' ? 'hidden' : ''}`}>
             <div className="client-header" onClick={() => toggleSection('techom')}>
               <div className="client-info">
@@ -1108,54 +1422,16 @@ export default function BestLinksDashboardPage() {
             <div className="progress-container" style={{ padding: '0 30px' }}>
               <small>התקדמות: 10/10 מאמרים (100%) 🎉</small>
               <div className="progress-bar">
-                <div className="progress-fill techom"></div>
+                <div className="progress-fill" style={{ width: '100%', background: 'linear-gradient(90deg, #10b981, #34d399)' }}></div>
               </div>
             </div>
             
             <div className={`collapse-content ${openSections.has('techom') ? 'active' : ''}`}>
-              {/* Client Quick Links */}
               <div className="client-links-section">
                 <div className="client-links-title">📎 קישורים מהירים - טקהום</div>
                 <div className="client-links-buttons">
-                  <a 
-                    href="https://docs.google.com/spreadsheets/d/14JqLypt9kDdjzUUJAPXrvIVKzyVnM9I0/edit?gid=571005030#gid=571005030" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn planning"
-                  >
-                    📊 טבלת תכנון
-                  </a>
-                  <a 
-                    href="https://docs.google.com/document/d/1TWSjlklfsfVclOkZ3BlYSo2WJikb0-rGSRo8-Zu4J4s/edit?usp=sharing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn seo"
-                  >
-                    📄 מסמך לינקים (עדכן כאן!)
-                  </a>
-                </div>
-                <div className="doc-explanation planning">
-                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
-                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
-                  <ul>
-                    <li>כותרות מאמרים ונושאים</li>
-                    <li>אתרי מדיה יעד</li>
-                    <li>תאריכי פרסום/תזמון</li>
-                    <li>סטטוס (נכתב, אושר, פורסם)</li>
-                    <li>מחירים ותקציבים</li>
-                  </ul>
-                </div>
-                <div className="doc-explanation seo">
-                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
-                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
-                  <ul>
-                    <li>כל הלינקים ממאמרים שפורסמו</li>
-                    <li>URL + טקסט עוגן (anchor text)</li>
-                    <li>מאורגן לפי קמפיין/אצווה</li>
-                  </ul>
-                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
-                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
-                  </p>
+                  <a href="https://docs.google.com/spreadsheets/d/14JqLypt9kDdjzUUJAPXrvIVKzyVnM9I0/edit?gid=571005030#gid=571005030" target="_blank" rel="noopener noreferrer" className="doc-link-btn planning">📊 טבלת תכנון</a>
+                  <a href="https://docs.google.com/document/d/1TWSjlklfsfVclOkZ3BlYSo2WJikb0-rGSRo8-Zu4J4s/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="doc-link-btn seo">📄 מסמך לינקים</a>
                 </div>
               </div>
               <div className="articles-container">
@@ -1193,7 +1469,7 @@ export default function BestLinksDashboardPage() {
                       <td className="article-site">horimnet.co.il</td>
                       <td><span className="dr-badge">20</span></td>
                       <td className="article-price">500₪</td>
-                      <td><a href="https://horimnet.co.il/%d7%90%d7%99%d7%a4%d7%94-%d7%a7%d7%95%d7%a0%d7%99%d7%9d-%d7%9e%d7%a0%d7%a0%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c%d7%a5/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
+                      <td><a href="https://horimnet.co.il/%d7%90%d7%99%d7%a4%d7%94-%d7%a7%d7%95%d7%a0%d7%99%d7%9d-%d7%9e%d7%a0%d7%a2%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c%d7%a5/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
                     </tr>
                     <tr>
                       <td>4</td>
@@ -1201,7 +1477,7 @@ export default function BestLinksDashboardPage() {
                       <td className="article-site">applications.co.il</td>
                       <td><span className="dr-badge">38</span></td>
                       <td className="article-price">624₪</td>
-                      <td><a href="https://www.applications.co.il/%d7%97%d7%9e%d7%99%d7%a9%d7%94-%d7%98%d7%99%d7%a4%d7%99%d7%9d-%d7%9c%d7%a8%d7%9b%d7%99%d7%a9%d7%aa-%d7%9e%d7%a0%d7%a0%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
+                      <td><a href="https://www.applications.co.il/%d7%97%d7%9e%d7%99%d7%a9%d7%94-%d7%98%d7%99%d7%a4%d7%99%d7%9d-%d7%9c%d7%a8%d7%9b%d7%99%d7%a9%d7%aa-%d7%9e%d7%a0%d7%a2%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
                     </tr>
                     <tr>
                       <td>5</td>
@@ -1225,7 +1501,7 @@ export default function BestLinksDashboardPage() {
                       <td className="article-site">hwzone.co.il</td>
                       <td><span className="dr-badge">47</span></td>
                       <td className="article-price">600₪</td>
-                      <td><a href="https://hwzone.co.il/channel-ad/best-links/%d7%9b%d7%9e%d7%94-%d7%91%d7%90%d7%9e%d7%aa-%d7%a2%d7%95%d7%9c%d7%94-%d7%9e%d7%a0%d7%a0%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c%d7%a5-%d7%aa%d7%9e%d7%99%d7%93/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
+                      <td><a href="https://hwzone.co.il/channel-ad/best-links/%d7%9b%d7%9e%d7%94-%d7%91%d7%90%d7%9e%d7%aa-%d7%a2%d7%95%d7%9c%d7%94-%d7%9e%d7%a0%d7%a2%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c%d7%a5-%d7%aa%d7%9e%d7%99%d7%93/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
                     </tr>
                     <tr>
                       <td>8</td>
@@ -1233,7 +1509,7 @@ export default function BestLinksDashboardPage() {
                       <td className="article-site">applications.co.il</td>
                       <td><span className="dr-badge">38</span></td>
                       <td className="article-price">624₪</td>
-                      <td><a href="https://www.applications.co.il/%d7%9e%d7%93%d7%95%d7%a2-%d7%9e%d7%a0%d7%a0%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c%d7%a5-%d7%9c%d7%99%d7%9c%d7%93%d7%99%d7%9d-%d7%95%d7%a7%d7%a9%d7%99%d7%a9/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
+                      <td><a href="https://www.applications.co.il/%d7%9e%d7%93%d7%95%d7%a2-%d7%9e%d7%a0%d7%a2%d7%95%d7%9c-%d7%97%d7%9b%d7%9d-%d7%9c%d7%93%d7%9c%d7%aa-%d7%9e%d7%95%d7%9e%d7%9c%d7%a5-%d7%9c%d7%99%d7%9c%d7%93%d7%99%d7%9d-%d7%95%d7%a7%d7%a9%d7%99%d7%a9/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗</a></td>
                     </tr>
                     <tr>
                       <td>9</td>
@@ -1257,14 +1533,14 @@ export default function BestLinksDashboardPage() {
             </div>
           </section>
 
-          {/* Danesya Section */}
-          <section id="client-danesya" className={`client-section ${selectedClient && selectedClient !== 'danesya' ? 'hidden' : ''}`}>
-            <div className="client-header" onClick={() => toggleSection('danesya')}>
+          {/* IPC Section */}
+          <section id="client-ipc" className={`client-section ${selectedClient && selectedClient !== 'ipc' ? 'hidden' : ''}`}>
+            <div className="client-header" onClick={() => toggleSection('ipc')}>
               <div className="client-info">
-                <div className="client-icon danesya">🏠</div>
+                <div className="client-icon ipc">🎓</div>
                 <div className="client-name">
-                  <h2>דנסיה - נדל"ן דובאי</h2>
-                  <p>איש קשר: גבי | השקעות נדל"ן</p>
+                  <h2>IPC - המכללה</h2>
+                  <p>איש קשר: אוהד | קורסים מקצועיים</p>
                 </div>
               </div>
               <div className="client-stats">
@@ -1273,67 +1549,29 @@ export default function BestLinksDashboardPage() {
                   <div className="stat-label">פורסמו</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-value scheduled">14</div>
+                  <div className="stat-value scheduled">3</div>
                   <div className="stat-label">תוזמנו</div>
                 </div>
                 <div className="stat">
-                  <div className="payment-status payment-pending">⏳ ממתין לתשלום</div>
+                  <div className="payment-status payment-paid">✅ שולם 18,100₪</div>
                 </div>
-                <div className={`collapse-toggle ${openSections.has('danesya') ? 'active' : ''}`}>▼</div>
+                <div className={`collapse-toggle ${openSections.has('ipc') ? 'active' : ''}`}>▼</div>
               </div>
             </div>
             
             <div className="progress-container" style={{ padding: '0 30px' }}>
-              <small>התקדמות: 1/15 מאמרים (7%)</small>
+              <small>התקדמות: 1/4 מאמרים (25%)</small>
               <div className="progress-bar">
-                <div className="progress-fill danesya" style={{ width: '7%' }}></div>
+                <div className="progress-fill" style={{ width: '25%', background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}></div>
               </div>
             </div>
             
-            <div className={`collapse-content ${openSections.has('danesya') ? 'active' : ''}`}>
-              {/* Client Quick Links */}
+            <div className={`collapse-content ${openSections.has('ipc') ? 'active' : ''}`}>
               <div className="client-links-section">
-                <div className="client-links-title">📎 קישורים מהירים - דנסיה</div>
+                <div className="client-links-title">📎 קישורים מהירים - IPC</div>
                 <div className="client-links-buttons">
-                  <a 
-                    href="https://docs.google.com/spreadsheets/d/1yS9ynLV86z3YKn8VijJkTk5H6gXeAtcazCQ7LHHc8s0/edit?gid=0#gid=0" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn planning"
-                  >
-                    📊 טבלת תכנון
-                  </a>
-                  <a 
-                    href="https://docs.google.com/document/d/1qtGeX29OrCst246QHucOo7UPyms8JqTubIxfvSuweIo/edit?usp=sharing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn seo"
-                  >
-                    📄 מסמך לינקים (עדכן כאן!)
-                  </a>
-                </div>
-                <div className="doc-explanation planning">
-                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
-                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
-                  <ul>
-                    <li>כותרות מאמרים ונושאים</li>
-                    <li>אתרי מדיה יעד</li>
-                    <li>תאריכי פרסום/תזמון</li>
-                    <li>סטטוס (נכתב, אושר, פורסם)</li>
-                    <li>מחירים ותקציבים</li>
-                  </ul>
-                </div>
-                <div className="doc-explanation seo">
-                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
-                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
-                  <ul>
-                    <li>כל הלינקים ממאמרים שפורסמו</li>
-                    <li>URL + טקסט עוגן (anchor text)</li>
-                    <li>מאורגן לפי קמפיין/אצווה</li>
-                  </ul>
-                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
-                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
-                  </p>
+                  <a href="https://docs.google.com/spreadsheets/d/18OPxjYa3JEM4M198Mh7QPPVGbRT4EnFTbZbiFziFLaA/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" className="doc-link-btn planning">📊 טבלת תכנון</a>
+                  <a href="https://docs.google.com/document/d/1FE66e0rgAdJTuAb70M1-YHZtcWhOmaFLe_Y9e6uyRrU/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="doc-link-btn seo">📄 מסמך לינקים</a>
                 </div>
               </div>
               <div className="articles-container">
@@ -1343,571 +1581,36 @@ export default function BestLinksDashboardPage() {
                       <th>#</th>
                       <th>כותרת</th>
                       <th>אתר</th>
-                      <th>תאריך</th>
-                      <th>מחיר</th>
                       <th>סטטוס</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td className="article-title">למי מתאימות השקעות נדל"ן בדובאי?</td>
-                      <td className="article-site">ivalue.co.il</td>
-                      <td className="article-date">פורסם ✅</td>
-                      <td className="article-price">134₪</td>
-                      <td><span className="status-badge status-published">✅ פורסם</span></td>
+                      <td className="article-title">מכללת IPC - תגובות שלא משאירות מקום לספק</td>
+                      <td className="article-site">tgspot.co.il</td>
+                      <td><a href="https://www.tgspot.co.il/ipc-college-comments-on-the-business-accounting-course/" target="_blank" rel="noopener noreferrer" className="link-btn">🔗 פורסם</a></td>
                     </tr>
                     <tr>
                       <td>2</td>
-                      <td className="article-title">מבחר דירות למכירה בדובאי</td>
-                      <td className="article-site">househunt.co.il</td>
-                      <td className="article-date">21.12.25</td>
-                      <td className="article-price">144₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
+                      <td className="article-title">חפשו IPC מכללה ביקורת - ביקורות מאוזנות</td>
+                      <td className="article-site">thestudent.co.il</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 4.1</span></td>
                     </tr>
                     <tr>
                       <td>3</td>
-                      <td className="article-title">למה השקעה בדובאי ולא במקומות אחרים</td>
-                      <td className="article-site">israelcalcali.co.il</td>
-                      <td className="article-date">23.12.25</td>
-                      <td className="article-price">144₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
+                      <td className="article-title">מכללת IPC חוות דעת שתזניק את הקריירה</td>
+                      <td className="article-site">bhol.co.il</td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 8.1</span></td>
                     </tr>
                     <tr>
                       <td>4</td>
-                      <td className="article-title">איך לבחור סוכנות דירות להשקעה בדובאי</td>
-                      <td className="article-site">epoch.org.il</td>
-                      <td className="article-date">25.12.25</td>
-                      <td className="article-price">134₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td className="article-title">מדריך ממוקד למשקיע דירות בדובאי</td>
-                      <td className="article-site">clickinvest.co.il</td>
-                      <td className="article-date">28.12.25</td>
-                      <td className="article-price">1,152₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>6</td>
-                      <td className="article-title">דירות בדובאי - הסוד של המשקיעים</td>
-                      <td className="article-site">bizportal.co.il</td>
-                      <td className="article-date">30.12.25</td>
-                      <td className="article-price">3,648₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>7</td>
-                      <td className="article-title">מתי הכי כדאי לקנות דירה בדובאי</td>
-                      <td className="article-site">mimoona.co.il</td>
-                      <td className="article-date">1.1.26</td>
-                      <td className="article-price">134₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>8</td>
-                      <td className="article-title">טעויות שמשקיעים עושים ברכישת נדל"ן</td>
-                      <td className="article-site">househunt.co.il</td>
-                      <td className="article-date">4.1.26</td>
-                      <td className="article-price">154₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>9</td>
-                      <td className="article-title">6 טעויות בדירות להשקעה בדובאי</td>
-                      <td className="article-site">finance.walla.co.il</td>
-                      <td className="article-date">6.1.26</td>
-                      <td className="article-price">5,760₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>10</td>
-                      <td className="article-title">למה 2026 היא השנה הנכונה לנדל"ן דובאי</td>
-                      <td className="article-site">moneysite.co.il</td>
-                      <td>מאושר</td>
-                      <td className="article-price">1,400₪</td>
-                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
-                    </tr>
-                    <tr>
-                      <td>11</td>
-                      <td className="article-title">למה משקיעים מכוונים לדירות בדובאי</td>
-                      <td className="article-site">mygoldi.co.il</td>
-                      <td>מאושר</td>
-                      <td className="article-price">134₪</td>
-                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
-                    </tr>
-                    <tr>
-                      <td>12</td>
-                      <td className="article-title">השקעות נדל"ן בדובאי: איך מתחילים נכון</td>
-                      <td className="article-site">babyfinance.co.il</td>
-                      <td>מאושר</td>
-                      <td className="article-price">288₪</td>
-                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
-                    </tr>
-                    <tr>
-                      <td>13</td>
-                      <td className="article-title">כל מה שרציתם לדעת על השקעה בדובאי</td>
-                      <td className="article-site">ymag.ynet.co.il</td>
-                      <td>מאושר</td>
-                      <td className="article-price">864₪</td>
-                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
-                    </tr>
-                    <tr>
-                      <td>14</td>
-                      <td className="article-title">נדל"ן בדובאי: הטרנד שסוחף ישראלים</td>
-                      <td className="article-site">globes.co.il</td>
-                      <td>מאושר</td>
-                      <td className="article-price">960₪</td>
-                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
-                    </tr>
-                    <tr>
-                      <td>15</td>
-                      <td className="article-title">חולמים על דירה בדובאי</td>
-                      <td className="article-site">nadlan2.co.il</td>
-                      <td>מאושר</td>
-                      <td className="article-price">173₪</td>
-                      <td><span className="status-badge status-pending">⏳ מאושר</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-
-          {/* Zoolu Section */}
-          <section id="client-zoolu" className={`client-section ${selectedClient && selectedClient !== 'zoolu' ? 'hidden' : ''}`}>
-            <div className="client-header" onClick={() => toggleSection('zoolu')}>
-              <div className="client-info">
-                <div className="client-icon zoolu">🦁</div>
-                <div className="client-name">
-                  <h2>זולו - חנות חיות</h2>
-                  <p>קבוצת מילאטין | ציוד ומזון לבע"ח</p>
-                </div>
-              </div>
-              <div className="client-stats">
-                <div className="stat">
-                  <div className="stat-value published">0</div>
-                  <div className="stat-label">פורסמו</div>
-                </div>
-                <div className="stat">
-                  <div className="stat-value scheduled">5</div>
-                  <div className="stat-label">תוזמנו</div>
-                </div>
-                <div className="stat">
-                  <div className="stat-value pending">37</div>
-                  <div className="stat-label">מאושרים</div>
-                </div>
-                <div className="stat">
-                  <div className="payment-status payment-paid">✅ שולם ~22K₪</div>
-                </div>
-                <div className={`collapse-toggle ${openSections.has('zoolu') ? 'active' : ''}`}>▼</div>
-              </div>
-            </div>
-            
-            <div className="progress-container" style={{ padding: '0 30px' }}>
-              <small>התקדמות: 0/42 מאמרים (0%)</small>
-              <div className="progress-bar">
-                <div className="progress-fill zoolu" style={{ width: '0%' }}></div>
-              </div>
-            </div>
-            
-            <div className={`collapse-content ${openSections.has('zoolu') ? 'active' : ''}`}>
-              {/* Client Quick Links */}
-              <div className="client-links-section">
-                <div className="client-links-title">📎 קישורים מהירים - זולו</div>
-                <div className="client-links-buttons">
-                  <a 
-                    href="https://docs.google.com/spreadsheets/d/1BaLmOtVOlMPiNLI4RZDbW9kcAAAsY9Hd/edit?usp=sharing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn planning"
-                  >
-                    📊 טבלת תכנון
-                  </a>
-                  <a 
-                    href="https://docs.google.com/document/d/1TWSjlklfsfVclOkZ3BlYSo2WJikb0-rGSRo8-Zu4J4s/edit?usp=sharing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn seo"
-                  >
-                    📄 מסמך לינקים (עדכן כאן!)
-                  </a>
-                </div>
-                <div className="doc-explanation planning">
-                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
-                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
-                  <ul>
-                    <li>כותרות מאמרים ונושאים</li>
-                    <li>אתרי מדיה יעד</li>
-                    <li>תאריכי פרסום/תזמון</li>
-                    <li>סטטוס (נכתב, אושר, פורסם)</li>
-                    <li>מחירים ותקציבים</li>
-                  </ul>
-                </div>
-                <div className="doc-explanation seo">
-                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
-                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
-                  <ul>
-                    <li>כל הלינקים ממאמרים שפורסמו</li>
-                    <li>URL + טקסט עוגן (anchor text)</li>
-                    <li>מאורגן לפי קמפיין/אצווה</li>
-                  </ul>
-                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
-                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
-                  </p>
-                </div>
-              </div>
-              <div className="timeline">
-                <div className="timeline-title">📅 תזמונים קרובים</div>
-                <div className="timeline-grid">
-                  <div className="timeline-item zoolu">
-                    <div className="timeline-date">23.12.25</div>
-                    <div className="timeline-client">🦁 זולו</div>
-                    <div className="timeline-article">זולו – חנות חיות שגדלה עם קהילת בעלי החיים</div>
-                    <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>maariv.co.il | DR 79 | 1,785₪</div>
-                  </div>
-                  <div className="timeline-item zoolu">
-                    <div className="timeline-date">25.12.25</div>
-                    <div className="timeline-client">🦁 זולו</div>
-                    <div className="timeline-article">אמפולות נגד פרעושים לחתולים</div>
-                    <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>tudu.co.il | DR 20 | 192₪</div>
-                  </div>
-                  <div className="timeline-item zoolu">
-                    <div className="timeline-date">28.12.25</div>
-                    <div className="timeline-client">🦁 זולו</div>
-                    <div className="timeline-article">אוכל לחתולים במשלוח</div>
-                    <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>dtdc.co.il | DR 41 | 192₪</div>
-                  </div>
-                  <div className="timeline-item zoolu">
-                    <div className="timeline-date">30.12.25</div>
-                    <div className="timeline-client">🦁 זולו</div>
-                    <div className="timeline-article">אוכל רפואי לכלבים</div>
-                    <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>kumba.co.il | DR 24 | 240₪</div>
-                  </div>
-                  <div className="timeline-item zoolu">
-                    <div className="timeline-date">1.1.26</div>
-                    <div className="timeline-client">🦁 זולו</div>
-                    <div className="timeline-article">איפה כדאי לקנות אוכל לחתולים זול</div>
-                    <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#94a3b8' }}>smartcapital.co.il | DR 16 | 192₪</div>
-                  </div>
-                </div>
-              </div>
-              <div style={{ padding: '20px 30px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                <p style={{ color: '#94a3b8' }}>✅ <strong>37 מאמרים נוספים מאושרים</strong> - ממתינים לתזמון</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Mhaim Section */}
-          <section id="client-mhaim" className={`client-section ${selectedClient && selectedClient !== 'mhaim' ? 'hidden' : ''}`}>
-            <div className="client-header" onClick={() => toggleSection('mhaim')}>
-              <div className="client-info">
-                <div className="client-icon mhaim">🐾</div>
-                <div className="client-name">
-                  <h2>המחסן של חיים</h2>
-                  <p>קבוצת מילאטין | חנות חיות</p>
-                </div>
-              </div>
-              <div className="client-stats">
-                <div className="stat">
-                  <div className="stat-value published">0</div>
-                  <div className="stat-label">פורסמו</div>
-                </div>
-                <div className="stat">
-                  <div className="stat-value scheduled">6</div>
-                  <div className="stat-label">תוזמנו</div>
-                </div>
-                <div className="stat">
-                  <div className="stat-value pending">6</div>
-                  <div className="stat-label">ממתינים</div>
-                </div>
-                <div className="stat">
-                  <div className="payment-status payment-paid">✅ שולם ~35K₪</div>
-                </div>
-                <div className={`collapse-toggle ${openSections.has('mhaim') ? 'active' : ''}`}>▼</div>
-              </div>
-            </div>
-            
-            <div className="progress-container" style={{ padding: '0 30px' }}>
-              <small>התקדמות: 0/12 מאמרים (0%)</small>
-              <div className="progress-bar">
-                <div className="progress-fill mhaim" style={{ width: '0%' }}></div>
-              </div>
-            </div>
-            
-            <div className={`collapse-content ${openSections.has('mhaim') ? 'active' : ''}`}>
-              {/* Client Quick Links */}
-              <div className="client-links-section">
-                <div className="client-links-title">📎 קישורים מהירים - המחסן של חיים</div>
-                <div className="client-links-buttons">
-                  <a 
-                    href="https://docs.google.com/spreadsheets/d/1SafY06BwYyUDXoJhARAp2ngGdSjJjra8/edit?gid=189942519#gid=189942519" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn planning"
-                  >
-                    📊 טבלת תכנון
-                  </a>
-                  <a 
-                    href="https://docs.google.com/document/d/1zygB3DF3NI6pUX2nqRWngUf-RpV3VGG_dL6jaNRN9js/edit?usp=sharing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="doc-link-btn seo"
-                  >
-                    📄 מסמך לינקים (עדכן כאן!)
-                  </a>
-                </div>
-                <div className="doc-explanation planning">
-                  <h4>📊 טבלת תכנון (Google Sheets)</h4>
-                  <p>הטבלה מכילה את תכנון ומעקב המאמרים שיפורסמו באתרי המדיה. כוללת:</p>
-                  <ul>
-                    <li>כותרות מאמרים ונושאים</li>
-                    <li>אתרי מדיה יעד</li>
-                    <li>תאריכי פרסום/תזמון</li>
-                    <li>סטטוס (נכתב, אושר, פורסם)</li>
-                    <li>מחירים ותקציבים</li>
-                  </ul>
-                </div>
-                <div className="doc-explanation seo">
-                  <h4>📄 מסמך לינקים (Google Docs) - ⚠️ עדכן כאן אחרי כל פרסום!</h4>
-                  <p><strong>זהו המסירה העיקרית ללקוח!</strong> המסמך מכיל את כל לינקי ה-SEO שמצביעים לאתרי הלקוח.</p>
-                  <ul>
-                    <li>כל הלינקים ממאמרים שפורסמו</li>
-                    <li>URL + טקסט עוגן (anchor text)</li>
-                    <li>מאורגן לפי קמפיין/אצווה</li>
-                  </ul>
-                  <p style={{ marginTop: '10px', fontWeight: 700, color: '#fbbf24' }}>
-                    ⚠️ חשוב: אחרי כל פרסום מאמר, הוסף את הלינק החדש למסמך הזה!
-                  </p>
-                </div>
-              </div>
-              <div className="articles-container">
-                <table className="articles-table">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>כותרת</th>
-                      <th>אתר</th>
-                      <th>תאריך</th>
-                      <th>DR</th>
-                      <th>מחיר</th>
-                      <th>סטטוס</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td className="article-title">המדריך המלא: איך לבחור מזון לבעלי חיים</td>
-                      <td className="article-site">food.walla.co.il</td>
-                      <td className="article-date">17.12.25</td>
-                      <td><span className="dr-badge">83</span></td>
-                      <td className="article-price">3,648₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td className="article-title">איך לבחור שימורים לכלבים</td>
-                      <td className="article-site">hashulchan.co.il</td>
-                      <td className="article-date">23.12.25</td>
-                      <td><span className="dr-badge">53</span></td>
-                      <td className="article-price">1,440₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td className="article-title">חול לחתולים שגורם לבית להישאר נקי</td>
-                      <td className="article-site">mako.co.il</td>
-                      <td className="article-date">1.1.26</td>
-                      <td><span className="dr-badge">83</span></td>
-                      <td className="article-price">7,200₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td className="article-title">אוכל לגורים: המדריך המלא</td>
-                      <td className="article-site">foodis.co.il</td>
-                      <td className="article-date">8.1.26</td>
-                      <td><span className="dr-badge">47</span></td>
-                      <td className="article-price">768₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td className="article-title">מחנות חיות לאימפריה - הסיפור של המחסן של חיים</td>
-                      <td className="article-site">globes.co.il</td>
-                      <td className="article-date">15.1.26</td>
-                      <td><span className="dr-badge">83</span></td>
-                      <td className="article-price">5,760₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr>
-                      <td>6</td>
-                      <td className="article-title">הפתרונות החסכוניים להאכלת חתולי רחוב</td>
-                      <td className="article-site">bizportal.co.il</td>
-                      <td className="article-date">22.1.26</td>
-                      <td><span className="dr-badge">73</span></td>
-                      <td className="article-price">864₪</td>
-                      <td><span className="status-badge status-scheduled">📅 תוזמן</span></td>
-                    </tr>
-                    <tr style={{ opacity: 0.6 }}>
-                      <td>7</td>
-                      <td className="article-title">אוכל לגורים - ההוצאה הקטנה שמונעת עלויות</td>
+                      <td className="article-title">למה חשוב לקרוא ביקורות על IPC</td>
                       <td className="article-site">hon.co.il</td>
-                      <td>---</td>
-                      <td><span className="dr-badge">46</span></td>
-                      <td className="article-price">864₪</td>
-                      <td><span className="status-badge status-waiting">⏳ ממתין</span></td>
-                    </tr>
-                    <tr style={{ opacity: 0.6 }}>
-                      <td>8</td>
-                      <td className="article-title">מדריך רכישה: חיתולים לכלבים</td>
-                      <td className="article-site">magazine.yad2.co.il</td>
-                      <td>---</td>
-                      <td><span className="dr-badge">68</span></td>
-                      <td className="article-price">807₪</td>
-                      <td><span className="status-badge status-waiting">⏳ ממתין</span></td>
-                    </tr>
-                    <tr style={{ opacity: 0.6 }}>
-                      <td>9</td>
-                      <td className="article-title">המחסן של חיים בראשון לציון</td>
-                      <td className="article-site">13tv.co.il</td>
-                      <td>---</td>
-                      <td><span className="dr-badge">76</span></td>
-                      <td className="article-price">1,536₪</td>
-                      <td><span className="status-badge status-waiting">⏳ ממתין</span></td>
-                    </tr>
-                    <tr style={{ opacity: 0.6 }}>
-                      <td>10</td>
-                      <td className="article-title">חנות חיות אונליין עם משלוחים מהירים</td>
-                      <td className="article-site">il.pcmag.com</td>
-                      <td>---</td>
-                      <td><span className="dr-badge">91</span></td>
-                      <td className="article-price">336₪</td>
-                      <td><span className="status-badge status-waiting">⏳ ממתין</span></td>
-                    </tr>
-                    <tr style={{ opacity: 0.6 }}>
-                      <td>11</td>
-                      <td className="article-title">איפה מוצאים מונג' במבצע</td>
-                      <td className="article-site">finance.walla.co.il</td>
-                      <td>---</td>
-                      <td><span className="dr-badge">83</span></td>
-                      <td className="article-price">3,648₪</td>
-                      <td><span className="status-badge status-waiting">⏳ ממתין</span></td>
-                    </tr>
-                    <tr style={{ opacity: 0.6 }}>
-                      <td>12</td>
-                      <td className="article-title">איזה אוכל לכלבים מומלץ</td>
-                      <td className="article-site">foodsdictionary.co.il</td>
-                      <td>---</td>
-                      <td><span className="dr-badge">52</span></td>
-                      <td className="article-price">1,344₪</td>
-                      <td><span className="status-badge status-waiting">⏳ ממתין</span></td>
+                      <td><span className="status-badge status-scheduled">📅 תוזמן 15.1</span></td>
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            </div>
-          </section>
-
-          {/* Upcoming Timeline */}
-          <section className="client-section">
-            <div className="client-header">
-              <div className="client-info">
-                <div className="client-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #ec4899)' }}>📅</div>
-                <div className="client-name">
-                  <h2>לוח זמנים - פרסומים קרובים</h2>
-                  <p>דצמבר 2025 - ינואר 2026</p>
-                </div>
-              </div>
-            </div>
-            <div className="timeline">
-              <div className="timeline-grid">
-                <div className="timeline-item mhaim">
-                  <div className="timeline-date">17.12.25</div>
-                  <div className="timeline-client">🐾 המחסן של חיים</div>
-                  <div className="timeline-article">המדריך המלא: מזון לבעלי חיים</div>
-                </div>
-                <div className="timeline-item danesya">
-                  <div className="timeline-date">21.12.25</div>
-                  <div className="timeline-client">🏠 דנסיה</div>
-                  <div className="timeline-article">דירות למכירה בדובאי</div>
-                </div>
-                <div className="timeline-item mhaim">
-                  <div className="timeline-date">23.12.25</div>
-                  <div className="timeline-client">🐾 המחסן של חיים</div>
-                  <div className="timeline-article">שימורים לכלבים</div>
-                </div>
-                <div className="timeline-item danesya">
-                  <div className="timeline-date">23.12.25</div>
-                  <div className="timeline-client">🏠 דנסיה</div>
-                  <div className="timeline-article">השקעה בדובאי</div>
-                </div>
-                <div className="timeline-item zoolu">
-                  <div className="timeline-date">23.12.25</div>
-                  <div className="timeline-client">🦁 זולו</div>
-                  <div className="timeline-article">זולו - חנות חיות</div>
-                </div>
-                <div className="timeline-item danesya">
-                  <div className="timeline-date">25.12.25</div>
-                  <div className="timeline-client">🏠 דנסיה</div>
-                  <div className="timeline-article">דירות להשקעה בדובאי</div>
-                </div>
-                <div className="timeline-item zoolu">
-                  <div className="timeline-date">25.12.25</div>
-                  <div className="timeline-client">🦁 זולו</div>
-                  <div className="timeline-article">אמפולות נגד פרעושים</div>
-                </div>
-                <div className="timeline-item zoolu">
-                  <div className="timeline-date">28.12.25</div>
-                  <div className="timeline-client">🦁 זולו</div>
-                  <div className="timeline-article">אוכל לחתולים במשלוח</div>
-                </div>
-                <div className="timeline-item danesya">
-                  <div className="timeline-date">28.12.25</div>
-                  <div className="timeline-client">🏠 דנסיה</div>
-                  <div className="timeline-article">מדריך למשקיע</div>
-                </div>
-                <div className="timeline-item zoolu">
-                  <div className="timeline-date">30.12.25</div>
-                  <div className="timeline-client">🦁 זולו</div>
-                  <div className="timeline-article">אוכל רפואי לכלבים</div>
-                </div>
-                <div className="timeline-item danesya">
-                  <div className="timeline-date">30.12.25</div>
-                  <div className="timeline-client">🏠 דנסיה</div>
-                  <div className="timeline-article">דירות בדובאי - הסוד של המשקיעים</div>
-                </div>
-                <div className="timeline-item mhaim">
-                  <div className="timeline-date">1.1.26</div>
-                  <div className="timeline-client">🐾 המחסן של חיים</div>
-                  <div className="timeline-article">חול לחתולים</div>
-                </div>
-                <div className="timeline-item zoolu">
-                  <div className="timeline-date">1.1.26</div>
-                  <div className="timeline-client">🦁 זולו</div>
-                  <div className="timeline-article">אוכל לחתולים זול</div>
-                </div>
-                <div className="timeline-item danesya">
-                  <div className="timeline-date">1.1.26</div>
-                  <div className="timeline-client">🏠 דנסיה</div>
-                  <div className="timeline-article">דירה בדובאי</div>
-                </div>
-                <div className="timeline-item mhaim">
-                  <div className="timeline-date">8.1.26</div>
-                  <div className="timeline-client">🐾 המחסן של חיים</div>
-                  <div className="timeline-article">אוכל לגורים</div>
-                </div>
-                <div className="timeline-item mhaim">
-                  <div className="timeline-date">15.1.26</div>
-                  <div className="timeline-client">🐾 המחסן של חיים</div>
-                  <div className="timeline-article">סיפור המחסן של חיים</div>
-                </div>
-                <div className="timeline-item mhaim">
-                  <div className="timeline-date">22.1.26</div>
-                  <div className="timeline-client">🐾 המחסן של חיים</div>
-                  <div className="timeline-article">אוכל לחתולים זול</div>
-                </div>
               </div>
             </div>
           </section>
@@ -1921,4 +1624,3 @@ export default function BestLinksDashboardPage() {
     </div>
   );
 }
-
